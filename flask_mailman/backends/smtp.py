@@ -4,10 +4,9 @@ import socket
 import ssl
 import threading
 
-from django.conf import settings
-from flask_mailman.backends.base import BaseEmailBackend
-from flask_mailman.message import sanitize_address
-from flask_mailman.utils import DNS_NAME
+from .base import BaseEmailBackend
+from ..message import sanitize_address
+from ..utils import DNS_NAME
 
 
 class EmailBackend(BaseEmailBackend):
@@ -18,16 +17,16 @@ class EmailBackend(BaseEmailBackend):
                  use_tls=None, fail_silently=False, use_ssl=None, timeout=None,
                  ssl_keyfile=None, ssl_certfile=None,
                  **kwargs):
-        super().__init__(fail_silently=fail_silently)
-        self.host = host or settings.EMAIL_HOST
-        self.port = port or settings.EMAIL_PORT
-        self.username = settings.EMAIL_HOST_USER if username is None else username
-        self.password = settings.EMAIL_HOST_PASSWORD if password is None else password
-        self.use_tls = settings.EMAIL_USE_TLS if use_tls is None else use_tls
-        self.use_ssl = settings.EMAIL_USE_SSL if use_ssl is None else use_ssl
-        self.timeout = settings.EMAIL_TIMEOUT if timeout is None else timeout
-        self.ssl_keyfile = settings.EMAIL_SSL_KEYFILE if ssl_keyfile is None else ssl_keyfile
-        self.ssl_certfile = settings.EMAIL_SSL_CERTFILE if ssl_certfile is None else ssl_certfile
+        super().__init__(fail_silently=fail_silently, **kwargs)
+        self.host = host or self.mailman.server
+        self.port = port or self.mailman.port
+        self.username = self.mailman.username if username is None else username
+        self.password = self.mailman.password if password is None else password
+        self.use_tls = self.mailman.use_tls if use_tls is None else use_tls
+        self.use_ssl = self.mailman.use_ssl if use_ssl is None else use_ssl
+        self.timeout = self.mailman.timeout if timeout is None else timeout
+        self.ssl_keyfile = self.mailman.ssl_keyfile if ssl_keyfile is None else ssl_keyfile
+        self.ssl_certfile = self.mailman.ssl_certfile if ssl_certfile is None else ssl_certfile
         if self.use_ssl and self.use_tls:
             raise ValueError(
                 "EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive, so only set "
@@ -118,7 +117,7 @@ class EmailBackend(BaseEmailBackend):
         """A helper method that does the actual sending."""
         if not email_message.recipients():
             return False
-        encoding = email_message.encoding or settings.DEFAULT_CHARSET
+        encoding = email_message.encoding or 'utf-8'
         from_email = sanitize_address(email_message.from_email, encoding)
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()

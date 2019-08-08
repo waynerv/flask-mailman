@@ -3,9 +3,7 @@
 import datetime
 import os
 
-from django.conf import settings
-
-from flask_mailman.backends.console import (
+from .console import (
     EmailBackend as ConsoleEmailBackend,
 )
 
@@ -21,7 +19,7 @@ class EmailBackend(ConsoleEmailBackend):
         if file_path is not None:
             self.file_path = file_path
         else:
-            self.file_path = getattr(settings, 'EMAIL_FILE_PATH', None)
+            self.file_path = self.mailman.file_path
         # Make sure self.file_path is a string.
         if not isinstance(self.file_path, str):
             raise ImproperlyConfigured('Path for saving emails is invalid: %r' % self.file_path)

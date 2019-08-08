@@ -1,4 +1,5 @@
 """Base email backend class."""
+from flask import current_app
 
 
 class BaseEmailBackend:
@@ -14,8 +15,9 @@ class BaseEmailBackend:
            # do something with connection
            pass
     """
-    def __init__(self, fail_silently=False, **kwargs):
+    def __init__(self, mailman=None, fail_silently=False, **kwargs):
         self.fail_silently = fail_silently
+        self.mailman = mailman or current_app.extensions['mailman']
 
     def open(self):
         """

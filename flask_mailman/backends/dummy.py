@@ -2,7 +2,7 @@
 Dummy email backend that does nothing.
 """
 
-from flask_mailman.backends.base import BaseEmailBackend
+from .base import BaseEmailBackend
 
 
 class EmailBackend(BaseEmailBackend):

@@ -2,8 +2,7 @@
 Backend for test environment.
 """
 
-import flask_mailman
-from flask_mailman.backends.base import BaseEmailBackend
+from .base import BaseEmailBackend
 
 
 class EmailBackend(BaseEmailBackend):
@@ -17,14 +16,14 @@ class EmailBackend(BaseEmailBackend):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not hasattr(flask_mailman, 'outbox'):
-            flask_mailman.outbox = []
+        if not hasattr(self.mailman, 'outbox'):
+            self.mailman.outbox = []
 
     def send_messages(self, messages):
         """Redirect messages to the dummy outbox"""
         msg_count = 0
         for message in messages:  # .message() triggers header validation
             message.message()
-            flask_mailman.outbox.append(message)
+            self.mailman.outbox.append(message)
             msg_count += 1
         return msg_count
