@@ -11,6 +11,11 @@ from .message import (
     EmailMultiAlternatives, SafeMIMEMultipart, SafeMIMEText,
     forbid_multi_line_headers, make_msgid,
 )
+from .backends.console import EmailBackend as ConsoleEmailBackend
+from .backends.dummy import EmailBackend as DummyEmailBackend
+from .backends.filebased import EmailBackend as FileEmailBackend
+from .backends.locmem import EmailBackend as MemoryEmailBackend
+from .backends.smtp import EmailBackend as SMTPEmailBackend
 from .utils import DNS_NAME, CachedDnsName
 from .utils import import_string
 
@@ -20,6 +25,14 @@ __all__ = [
     'make_msgid', 'BadHeaderError', 'forbid_multi_line_headers',
     '_MailMixin', 'Mail'
 ]
+
+MAIL_BACKENDS = {
+    'console': ConsoleEmailBackend,
+    'dummy': DummyEmailBackend,
+    'file': FileEmailBackend,
+    'memory': MemoryEmailBackend,
+    'smtp': SMTPEmailBackend
+}
 
 
 class _MailMixin(object):
@@ -33,20 +46,17 @@ class _MailMixin(object):
         constructor of the backend.
         """
         app = getattr(self, "app", None) or current_app
-        if backend is None:
-            if app.debug:
-                backend = 'app.flask_mailman.backends.console.EmailBackend'
-            elif app.testing:
-                backend = 'app.flask_mailman.backends.locmem.EmailBackend'
-            else:
-                backend = 'app.flask_mailman.backends.smtp.EmailBackend'
-
-        klass = import_string(backend)
-
         try:
-            return klass(mailman=app.extensions['mailman'], fail_silently=fail_silently, **kwds)
+            mailman = app.extensions['mailman']
         except KeyError:
-            raise RuntimeError("The curent application was not configured with Flask-Mailman")
+            raise RuntimeError("The current application was not configured with Flask-Mailman")
+
+        if backend is None:
+            klass = mailman.backend
+        else:
+            klass = import_string(backend)
+
+        return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 
     def send(self, mail, fail_silently=False):
         """Sends a single message instance. If TESTING is True the message will
@@ -145,8 +155,8 @@ class _MailMixin(object):
 
 
 class _Mail(_MailMixin):
-    def __init__(self, server, port, username, password, use_tls, use_ssl,
-                 default_sender, timeout, ssl_keyfile, ssl_certfile, use_localtime, file_path):
+    def __init__(self, server, port, username, password, use_tls, use_ssl, default_sender, timeout, ssl_keyfile,
+                 ssl_certfile, use_localtime, file_path, backend):
         self.server = server
         self.port = port
         self.username = username
@@ -159,6 +169,7 @@ class _Mail(_MailMixin):
         self.ssl_certfile = ssl_certfile
         self.use_localtime = use_localtime
         self.file_path = file_path
+        self.backend = backend
 
 
 class Mail(_MailMixin):
@@ -175,7 +186,14 @@ class Mail(_MailMixin):
             self.state = None
 
     @staticmethod
-    def init_mail(config):
+    def init_mail(config, testing=False):
+        # Set default mail backend in different environment
+        mail_backend = config.get('MAIL_BACKEND')
+        if mail_backend not in MAIL_BACKENDS.keys() and testing:
+            mail_backend = 'memory'
+        elif mail_backend not in MAIL_BACKENDS.keys():
+            mail_backend = 'smtp'
+
         return _Mail(
             config.get('MAIL_SERVER', '127.0.0.1'),
             config.get('MAIL_PORT', 25),
@@ -188,7 +206,8 @@ class Mail(_MailMixin):
             config.get('MAIL_SSL_KEYFILE'),
             config.get('MAIL_SSL_CERTFILE'),
             config.get('MAIL_USE_LOCALTIME', True),
-            config.get('MAIL_FILE_PATH')
+            config.get('MAIL_FILE_PATH'),
+            mail_backend,
         )
 
     def init_app(self, app):
@@ -199,7 +218,7 @@ class Mail(_MailMixin):
 
         :param app: Flask application instance
         """
-        state = self.init_mail(app.config)
+        state = self.init_mail(app.config, app.testing)
 
         # register extension with app
         app.extensions = getattr(app, 'extensions', {})

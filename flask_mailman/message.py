@@ -248,7 +248,10 @@ class EmailMessage:
 
     def get_connection(self, fail_silently=False):
         if not self.connection:
-            self.connection = current_app.extensions['mailman'].get_connection(fail_silently=fail_silently)
+            try:
+                self.connection = current_app.extensions['mailman'].get_connection(fail_silently=fail_silently)
+            except KeyError:
+                raise RuntimeError("The current application was not configured with Flask-Mailman")
         return self.connection
 
     def message(self):
