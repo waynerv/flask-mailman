@@ -1,11 +1,12 @@
 import mimetypes
+from collections import Iterable
 from email import (
     charset as Charset, encoders as Encoders, generator, message_from_string,
 )
 from email.errors import InvalidHeaderDefect, NonASCIILocalPartDefect
 from email.header import Header
 from email.headerregistry import Address
-from email.message import Message
+from email.message import Message as BasicMessage
 from email.mime.base import MIMEBase
 from email.mime.message import MIMEMessage
 from email.mime.multipart import MIMEMultipart
@@ -245,6 +246,11 @@ class EmailMessage:
         self.extra_headers = headers or {}
         self.connection = connection
 
+    def get_connection(self, fail_silently=False):
+        if not self.connection:
+            self.connection = current_app.extensions['mailman'].get_connection(fail_silently=fail_silently)
+        return self.connection
+
     def message(self):
         encoding = self.encoding or DEFAULT_CHARSET
         msg = SafeMIMEText(self.body, self.content_subtype, encoding)
@@ -278,6 +284,14 @@ class EmailMessage:
         addressees as well as Cc and Bcc entries).
         """
         return [email for email in (self.to + self.cc + self.bcc) if email]
+
+    def send(self, fail_silently=False):
+        """Send the email message."""
+        if not self.recipients():
+            # Don't bother creating the network connection if there's nobody to
+            # send to.
+            return 0
+        return self.get_connection(fail_silently).send_messages([self])
 
     def attach(self, filename=None, content=None, mimetype=None):
         """
@@ -349,7 +363,7 @@ class EmailMessage:
         Convert the content, mimetype pair into a MIME attachment object.
 
         If the mimetype is message/rfc822, content may be an
-        email.Message or EmailMessage object, as well as a str.
+        email.Message(import as BasicMessage) or EmailMessage object, as well as a str.
         """
         basetype, subtype = mimetype.split('/', 1)
         if basetype == 'text':
@@ -359,11 +373,11 @@ class EmailMessage:
             # Bug #18967: per RFC2046 s5.2.1, message/rfc822 attachments
             # must not be base64 encoded.
             if isinstance(content, EmailMessage):
-                # convert content into an email.Message first
+                # convert content into an email.Message(import as BasicMessage) first
                 content = content.message()
-            elif not isinstance(content, Message):
+            elif not isinstance(content, BasicMessage):
                 # For compatibility with existing code, parse the message
-                # into an email.Message object if it is not one already.
+                # into an email.Message(import as BasicMessage) object if it is not one already.
                 content = message_from_string(force_text(content))
 
             attachment = SafeMIMEMessage(content, subtype)
@@ -441,3 +455,40 @@ class EmailMultiAlternatives(EmailMessage):
             for alternative in self.alternatives:
                 msg.attach(self._create_mime_attachment(*alternative))
         return msg
+
+
+class Message(EmailMultiAlternatives):
+
+    def __init__(self, subject='',
+                 recipients=None,
+                 body='',
+                 html=None,
+                 alts=None,
+                 sender=None,
+                 cc=None,
+                 bcc=None,
+                 attachments=None,
+                 reply_to=None,
+                 date=None,
+                 charset=None,
+                 extra_headers=None,
+                 mail_options=None,
+                 rcpt_options=None,
+                 connection=None):
+        # Deal with alts parameter
+        if isinstance(alts, dict):
+            alts = [data[::-1] for data in list(alts.items())]
+        elif isinstance(alts, Iterable):
+            alts = [tuple(data[::-1]) for data in list(alts)]
+        else:
+            alts = None
+        # Deal with date parameter
+        if date:
+            extra_headers['Date'] = formatdate(date, localtime=current_app.extensions['mailman'].use_localtime)
+
+        super().__init__(subject, body, from_email=sender, to=recipients, bcc=bcc,
+                         connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
+                         cc=cc, reply_to=reply_to)
+        self.encoding = charset
+        if html:
+            self.attach_alternative(html, 'text/html')

@@ -4,7 +4,7 @@ Email backend that writes messages to console instead of sending them.
 import sys
 import threading
 
-from flask_mailman.backends.base import BaseEmailBackend
+from .base import BaseEmailBackend
 
 
 class EmailBackend(BaseEmailBackend):

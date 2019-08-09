@@ -35,11 +35,11 @@ class _MailMixin(object):
         app = getattr(self, "app", None) or current_app
         if backend is None:
             if app.debug:
-                backend = 'flask_mailman.backends.console.EmailBackend'
+                backend = 'app.flask_mailman.backends.console.EmailBackend'
             elif app.testing:
-                backend = 'flask_mailman.backends.locmem.EmailBackend'
+                backend = 'app.flask_mailman.backends.locmem.EmailBackend'
             else:
-                backend = 'flask_mailman.backends.smtp.EmailBackend'
+                backend = 'app.flask_mailman.backends.smtp.EmailBackend'
 
         klass = import_string(backend)
 
@@ -53,6 +53,7 @@ class _MailMixin(object):
         not actually be sent.
 
         :param mail: a Message instance.
+        :param fail_silently: A boolean. When it's False, send() will raise an smtplib.SMTPException if an error occurs.
         """
         if not mail.recipients():
             # Don't bother creating the network connection if there's nobody to
@@ -63,7 +64,7 @@ class _MailMixin(object):
 
         return mail.connection.send_messages([mail])
 
-    def send_mail(self, subject, message, from_email, recipient_list,
+    def send_mail(self, subject, body, from_email, recipient_list,
                   fail_silently=False, auth_user=None, auth_password=None,
                   connection=None, html_message=None):
         """
@@ -81,7 +82,7 @@ class _MailMixin(object):
             password=auth_password,
             fail_silently=fail_silently,
         )
-        mail = EmailMultiAlternatives(subject, message, from_email, recipient_list, connection=connection)
+        mail = EmailMultiAlternatives(subject, body, from_email, recipient_list, connection=connection)
         if html_message:
             mail.attach_alternative(html_message, 'text/html')
 
@@ -107,19 +108,19 @@ class _MailMixin(object):
             fail_silently=fail_silently,
         )
         messages = [
-            EmailMessage(subject, message, sender, recipient, connection=connection)
-            for subject, message, sender, recipient in datatuple
+            EmailMessage(subject, body, sender, recipient, connection=connection)
+            for subject, body, sender, recipient in datatuple
         ]
         return connection.send_messages(messages)
 
-    def mail_admins(self, subject, message, fail_silently=False, connection=None,
+    def mail_admins(self, subject, body, fail_silently=False, connection=None,
                     html_message=None):
         """Send a message to the admins, as defined by the ADMINS setting."""
         app = getattr(self, "app", None) or current_app
         if not app.config['ADMINS']:
             return
         mail = EmailMultiAlternatives(
-            '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), message,
+            '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), body,
             app.config['SERVER_EMAIL'], [a[1] for a in app.config['ADMINS']],
             connection=connection,
         )
@@ -127,15 +128,14 @@ class _MailMixin(object):
             mail.attach_alternative(html_message, 'text/html')
         self.send(mail, fail_silently=fail_silently)
 
-
-    def mail_managers(self, subject, message, fail_silently=False, connection=None,
+    def mail_managers(self, subject, body, fail_silently=False, connection=None,
                       html_message=None):
         """Send a message to the managers, as defined by the MANAGERS setting."""
         app = getattr(self, "app", None) or current_app
         if not app.config['MANAGERS']:
             return
         mail = EmailMultiAlternatives(
-            '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), message,
+            '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), body,
             app.config['SERVER_EMAIL'], [a[1] for a in app.config['MANAGERS']],
             connection=connection,
         )
@@ -146,7 +146,7 @@ class _MailMixin(object):
 
 class _Mail(_MailMixin):
     def __init__(self, server, port, username, password, use_tls, use_ssl,
-                 default_sender, timeout, ssl_keyfile, certfile, use_localtime, file_path):
+                 default_sender, timeout, ssl_keyfile, ssl_certfile, use_localtime, file_path):
         self.server = server
         self.port = port
         self.username = username
@@ -156,7 +156,7 @@ class _Mail(_MailMixin):
         self.default_sender = default_sender
         self.timeout = timeout
         self.ssl_keyfile = ssl_keyfile
-        self.ssl_certfile = certfile
+        self.ssl_certfile = ssl_certfile
         self.use_localtime = use_localtime
         self.file_path = file_path
 
@@ -174,7 +174,8 @@ class Mail(_MailMixin):
         else:
             self.state = None
 
-    def init_mail(self, config):
+    @staticmethod
+    def init_mail(config):
         return _Mail(
             config.get('MAIL_SERVER', '127.0.0.1'),
             config.get('MAIL_PORT', 25),
@@ -186,7 +187,7 @@ class Mail(_MailMixin):
             config.get('MAIL_TIMEOUT'),
             config.get('MAIL_SSL_KEYFILE'),
             config.get('MAIL_SSL_CERTFILE'),
-            config.get('MAIL_USE_LOCALTIME'),
+            config.get('MAIL_USE_LOCALTIME', True),
             config.get('MAIL_FILE_PATH')
         )
 
