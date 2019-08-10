@@ -9,7 +9,7 @@ from .console import (
 
 
 class ImproperlyConfigured(Exception):
-    """Django is somehow improperly configured"""
+    """Application is somehow improperly configured"""
     pass
 
 

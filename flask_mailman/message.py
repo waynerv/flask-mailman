@@ -233,6 +233,9 @@ class EmailMessage:
             self.reply_to = list(reply_to)
         else:
             self.reply_to = []
+        # Deal with tuple format from_email parameter
+        if isinstance(from_email, tuple):
+            from_email = '%s <%s>' % from_email
         self.from_email = from_email or current_app.extensions['mailman'].default_sender
         self.subject = subject
         self.body = body or ''
@@ -492,9 +495,6 @@ class Message(EmailMultiAlternatives):
         # Deal with date parameter
         if date:
             extra_headers['Date'] = formatdate(date, localtime=current_app.extensions['mailman'].use_localtime)
-        # Deal with sender parameter
-        if isinstance(sender, tuple):
-            sender = '%s <%s>' % sender
 
         super().__init__(subject, body, from_email=sender, to=recipients, bcc=bcc,
                          connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
