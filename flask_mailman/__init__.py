@@ -8,7 +8,7 @@ from flask import current_app
 # backends and the subsequent reorganization (See #10355)
 from .message import (
     DEFAULT_ATTACHMENT_MIME_TYPE, BadHeaderError, EmailMessage,
-    EmailMultiAlternatives, SafeMIMEMultipart, SafeMIMEText,
+    EmailMultiAlternatives, Message, SafeMIMEMultipart, SafeMIMEText,
     forbid_multi_line_headers, make_msgid,
 )
 from .backends.console import EmailBackend as ConsoleEmailBackend

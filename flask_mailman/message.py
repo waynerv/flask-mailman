@@ -495,3 +495,20 @@ class Message(EmailMultiAlternatives):
         self.encoding = charset
         if html:
             self.attach_alternative(html, 'text/html')
+
+    @property
+    def html(self):
+        for alts_content in self.alternatives:
+            if alts_content[-1] == 'text/html':
+                return alts_content[0]
+        return None
+
+    @html.setter
+    def html(self, content):
+        if content is None:
+            for alts_content in self.alternatives:
+                if alts_content[-1] == 'text/html':
+                    self.alternatives.remove(alts_content)
+        else:
+            assert content is not None
+            self.alternatives.append((content, 'text/html'))

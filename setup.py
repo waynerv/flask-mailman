@@ -1,7 +1,7 @@
 """
     Flask-Mailman
     ~~~~~~~~~~~~~~
-    Porting Django's mail implementation to your Flask applications.
+    Porting Django's email implementation to your Flask applications.
 
     :author: Xie Wei <ampedee@gmail.com>
     :copyright: (c) 2019 by Xie Wei.
@@ -9,7 +9,7 @@
 """
 from os import path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='Flask-Mailman',
-    version='0.1.0',
+    version='0.1.2',
     description="Porting Django's email implementation to your Flask applications.",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -26,7 +26,7 @@ setup(
     author='Xie Wei',
     author_email='ampedee@gmail.com',
     keywords='flask mail smtp flask-mail',
-    packages=['flask_mailman'],
+    packages=find_packages(exclude=['docs', 'tests*']),
     python_requires='>=3.5',
     install_requires=['flask'],
     classifiers=[
