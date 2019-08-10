@@ -488,6 +488,9 @@ class Message(EmailMultiAlternatives):
         # Deal with date parameter
         if date:
             extra_headers['Date'] = formatdate(date, localtime=current_app.extensions['mailman'].use_localtime)
+        # Deal with sender parameter
+        if isinstance(sender, tuple):
+            sender = '%s <%s>' % sender
 
         super().__init__(subject, body, from_email=sender, to=recipients, bcc=bcc,
                          connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,

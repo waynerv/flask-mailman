@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='Flask-Mailman',
-    version='0.1.2',
+    version='0.1.3',
     description="Porting Django's email implementation to your Flask applications.",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -28,7 +28,7 @@ setup(
     keywords='flask mail smtp flask-mail',
     packages=find_packages(exclude=['docs', 'tests*']),
     python_requires='>=3.5',
-    install_requires=['flask'],
+    install_requires=['flask>=0.10'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
