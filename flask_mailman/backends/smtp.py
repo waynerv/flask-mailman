@@ -13,6 +13,7 @@ class EmailBackend(BaseEmailBackend):
     """
     A wrapper that manages the SMTP network connection.
     """
+
     def __init__(self, host=None, port=None, username=None, password=None,
                  use_tls=None, fail_silently=False, use_ssl=None, timeout=None,
                  ssl_keyfile=None, ssl_certfile=None,
@@ -122,7 +123,8 @@ class EmailBackend(BaseEmailBackend):
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()
         try:
-            self.connection.sendmail(from_email, recipients, message.as_bytes(linesep='\r\n'))
+            self.connection.sendmail(from_email, recipients, message.as_bytes(linesep='\r\n'),
+                                     email_message.mail_options, email_message.rcpt_options)
         except smtplib.SMTPException:
             if not self.fail_silently:
                 raise

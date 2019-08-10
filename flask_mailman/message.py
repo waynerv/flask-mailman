@@ -246,6 +246,10 @@ class EmailMessage:
         self.extra_headers = headers or {}
         self.connection = connection
 
+        # Flask-Mail feature
+        self.mail_options = []
+        self.rcpt_options = []
+
     def get_connection(self, fail_silently=False):
         if not self.connection:
             try:
@@ -496,6 +500,8 @@ class Message(EmailMultiAlternatives):
                          connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
                          cc=cc, reply_to=reply_to)
         self.encoding = charset
+        self.mail_options = mail_options or []
+        self.rcpt_options = rcpt_options or []
         if html:
             self.attach_alternative(html, 'text/html')
 
