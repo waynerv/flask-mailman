@@ -52,7 +52,7 @@ class _MailMixin(object):
             raise RuntimeError("The current application was not configured with Flask-Mailman")
 
         if backend is None:
-            klass = mailman.backend
+            klass = MAIL_BACKENDS[mailman.backend]
         else:
             klass = import_string(backend)
 
@@ -131,7 +131,7 @@ class _MailMixin(object):
             return
         mail = EmailMultiAlternatives(
             '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), body,
-            app.config['SERVER_EMAIL'], [a[1] for a in app.config['ADMINS']],
+            app.config['MAIL_ADMIN'], [a[1] for a in app.config['ADMINS']],
             connection=connection,
         )
         if html_message:
@@ -146,7 +146,7 @@ class _MailMixin(object):
             return
         mail = EmailMultiAlternatives(
             '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), body,
-            app.config['SERVER_EMAIL'], [a[1] for a in app.config['MANAGERS']],
+            app.config['MAIL_ADMIN'], [a[1] for a in app.config['MANAGERS']],
             connection=connection,
         )
         if html_message:
