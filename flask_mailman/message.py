@@ -468,6 +468,24 @@ class EmailMultiAlternatives(EmailMessage):
 
 
 class Message(EmailMultiAlternatives):
+    """Encapsulates an email message.
+
+    :param subject: email subject header
+    :param recipients: list of email addresses
+    :param body: plain text message
+    :param html: HTML message
+    :param alts: A dict or an iterable to go through dict() that contains multipart alternatives
+    :param sender: email sender address, or **MAIL_DEFAULT_SENDER** by default
+    :param cc: CC list
+    :param bcc: BCC list
+    :param attachments: list of Attachment instances
+    :param reply_to: reply-to address
+    :param date: send date
+    :param charset: message character set
+    :param extra_headers: A dictionary of additional headers for the message
+    :param mail_options: A list of ESMTP options to be used in MAIL FROM command
+    :param rcpt_options:  A list of ESMTP options to be used in RCPT commands
+    """
 
     def __init__(self, subject='',
                  recipients=None,
