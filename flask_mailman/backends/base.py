@@ -1,6 +1,8 @@
 """Base email backend class."""
 from flask import current_app
 
+from ..message import Message
+
 
 class BaseEmailBackend:
     """
@@ -59,3 +61,11 @@ class BaseEmailBackend:
         messages sent.
         """
         raise NotImplementedError('subclasses of BaseEmailBackend must override send_messages() method')
+
+    def send_message(self, *args, **kwargs):
+        """Send a single message
+
+        Takes same arguments as Message constructor.
+        """
+
+        self.send_messages([Message(*args, **kwargs)])

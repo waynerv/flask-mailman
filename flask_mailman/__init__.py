@@ -23,7 +23,8 @@ __all__ = [
     'CachedDnsName', 'DNS_NAME', 'EmailMessage', 'EmailMultiAlternatives',
     'SafeMIMEText', 'SafeMIMEMultipart', 'DEFAULT_ATTACHMENT_MIME_TYPE',
     'make_msgid', 'BadHeaderError', 'forbid_multi_line_headers',
-    '_MailMixin', 'Mail'
+    '_MailMixin', 'Mail', 'Message', 'ConsoleEmailBackend', 'DummyEmailBackend', 'FileEmailBackend',
+    'MemoryEmailBackend', 'SMTPEmailBackend'
 ]
 
 MAIL_BACKENDS = {
@@ -40,7 +41,7 @@ class _MailMixin(object):
     def get_connection(self, backend=None, fail_silently=False, **kwds):
         """Load an email backend and return an instance of it.
 
-        If backend is None (default), use settings.EMAIL_BACKEND.
+        If backend is None (default), use app.config.MAIL_BACKEND.
 
         Both fail_silently and other keyword arguments are used in the
         constructor of the backend.
@@ -54,7 +55,7 @@ class _MailMixin(object):
         if backend is None:
             klass = MAIL_BACKENDS[mailman.backend]
         else:
-            klass = import_string(backend)
+            klass = backend
 
         return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 

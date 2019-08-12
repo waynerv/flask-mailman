@@ -518,6 +518,7 @@ class Message(EmailMultiAlternatives):
                          connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
                          cc=cc, reply_to=reply_to)
         self.encoding = charset
+        self.date = date
         self.mail_options = mail_options or []
         self.rcpt_options = rcpt_options or []
         if html:
@@ -539,3 +540,11 @@ class Message(EmailMultiAlternatives):
         else:
             assert content is not None
             self.alternatives.append((content, 'text/html'))
+
+    def add_recipient(self, recipient):
+        """Adds another recipient to the message.
+
+        :param recipient: email address of recipient.
+        """
+
+        self.to.append(recipient)
