@@ -26,9 +26,16 @@ setup(
     author='Xie Wei',
     author_email='ampedee@gmail.com',
     keywords='flask mail smtp flask-mail',
+    platforms='any',
     packages=find_packages(exclude=['docs', 'tests*']),
     python_requires='>=3.5',
     install_requires=['flask>=0.10'],
+    test_suite='nose.collector',
+    tests_require=[
+        'nose',
+        'speaklater',
+        'mock',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
