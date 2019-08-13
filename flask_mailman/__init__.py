@@ -84,8 +84,8 @@ class _MailMixin(object):
         Easy wrapper for sending a single message to a recipient list. All members
         of the recipient list will see the other recipients in the 'To' field.
 
-        If auth_user is None, use the EMAIL_HOST_USER setting.
-        If auth_password is None, use the EMAIL_HOST_PASSWORD setting.
+        If auth_user is None, use the MAIL_USERNAME setting.
+        If auth_password is None, use the MAIL_USERNAME setting.
 
         Note: The API for this method is frozen. New code wanting to extend the
         functionality should use the EmailMessage class directly.
@@ -99,7 +99,7 @@ class _MailMixin(object):
         if html_message:
             mail.attach_alternative(html_message, 'text/html')
 
-        return self.send(mail)
+        return mail.send()
 
     def send_mass_mail(self, datatuple, fail_silently=False, auth_user=None,
                        auth_password=None, connection=None):
@@ -107,10 +107,10 @@ class _MailMixin(object):
         Given a datatuple of (subject, message, from_email, recipient_list), send
         each message to each recipient list. Return the number of emails sent.
 
-        If from_email is None, use the DEFAULT_FROM_EMAIL setting.
+        If from_email is None, use the MAIL_DEFAULT_SENDER setting.
         If auth_user and auth_password are set, use them to log in.
-        If auth_user is None, use the EMAIL_HOST_USER setting.
-        If auth_password is None, use the EMAIL_HOST_PASSWORD setting.
+        If auth_user is None, use the MAIL_USERNAME setting.
+        If auth_password is None, use the MAIL_PASSWORD setting.
 
         Note: The API for this method is frozen. New code wanting to extend the
         functionality should use the EmailMessage class directly.
@@ -139,7 +139,7 @@ class _MailMixin(object):
         )
         if html_message:
             mail.attach_alternative(html_message, 'text/html')
-        self.send(mail, fail_silently=fail_silently)
+        mail.send(fail_silently=fail_silently)
 
     def mail_managers(self, subject, body, fail_silently=False, connection=None,
                       html_message=None):
@@ -154,10 +154,11 @@ class _MailMixin(object):
         )
         if html_message:
             mail.attach_alternative(html_message, 'text/html')
-        self.send(mail, fail_silently=fail_silently)
+        mail.send(fail_silently=fail_silently)
 
 
 class _Mail(_MailMixin):
+    """Initialize a state instance with all configs and methods"""
     def __init__(self, server, port, username, password, use_tls, use_ssl, default_sender, timeout, ssl_keyfile,
                  ssl_certfile, use_localtime, file_path, backend):
         self.server = server

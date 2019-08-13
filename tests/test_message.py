@@ -334,7 +334,7 @@ class TestMessage(TestCase):
         r = re.compile(r"<\S+@\S+>").match(msg.message()['Message-ID'])
         self.assertIsNotNone(r)
         self.assertIn('Message-ID: ', msg.message().as_string())
-        self.assertIn(msg.message()['Message-ID'][-28:], msg.message().as_string())
+        self.assertNotIn(msg.message()['Message-ID'], msg.message().as_string())
 
     def test_unicode_sender_tuple(self):
         msg = Message(subject="subject",

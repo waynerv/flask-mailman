@@ -479,7 +479,7 @@ class Message(EmailMultiAlternatives):
     :param sender: email sender address, or **MAIL_DEFAULT_SENDER** by default
     :param cc: CC list
     :param bcc: BCC list
-    :param attachments: list of Attachment instances
+    :param attachments: list of MIMEText instances or (filename, content, mimetype) tuple
     :param reply_to: reply-to address
     :param date: send date
     :param charset: message character set
@@ -528,7 +528,7 @@ class Message(EmailMultiAlternatives):
 
     @property
     def html(self):
-        for alts_content in self.alternatives:
+        for alts_content in reversed(self.alternatives):
             if alts_content[-1] == 'text/html':
                 return alts_content[0]
         return None
@@ -536,9 +536,10 @@ class Message(EmailMultiAlternatives):
     @html.setter
     def html(self, content):
         if content is None:
-            for alts_content in self.alternatives:
+            for alts_content in reversed(self.alternatives):
                 if alts_content[-1] == 'text/html':
                     self.alternatives.remove(alts_content)
+                    break
         else:
             assert content is not None
             self.alternatives.append((content, 'text/html'))
