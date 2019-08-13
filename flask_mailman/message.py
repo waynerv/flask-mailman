@@ -96,7 +96,7 @@ def split_addr(addr, encoding):
     else:
         localpart = Header(addr, encoding).encode()
         domain = ''
-    return localpart, domain
+    return (localpart, domain)
 
 
 def sanitize_address(addr, encoding):
@@ -234,9 +234,10 @@ class EmailMessage:
         else:
             self.reply_to = []
         # Deal with tuple format from_email parameter
+        from_email = from_email or current_app.extensions['mailman'].default_sender
         if isinstance(from_email, tuple):
             from_email = '%s <%s>' % from_email
-        self.from_email = from_email or current_app.extensions['mailman'].default_sender
+        self.from_email = from_email
         self.subject = subject
         self.body = body or ''
         self.attachments = []
@@ -512,11 +513,12 @@ class Message(EmailMultiAlternatives):
             alts = None
         # Deal with date parameter
         if date:
+            extra_headers = {} if extra_headers is None else extra_headers
             extra_headers['Date'] = formatdate(date, localtime=current_app.extensions['mailman'].use_localtime)
 
         super().__init__(subject, body, from_email=sender, to=recipients, bcc=bcc,
                          connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
-                         cc=cc, reply_to=reply_to)
+                         cc=cc, reply_to=[reply_to])
         self.encoding = charset
         self.date = date
         self.mail_options = mail_options or []
@@ -548,3 +550,6 @@ class Message(EmailMultiAlternatives):
         """
 
         self.to.append(recipient)
+
+    def __str__(self):
+        return self.message().as_string()

@@ -2,6 +2,12 @@
 Tools for sending email.
 """
 from flask import current_app
+
+from .backends.console import EmailBackend as ConsoleEmailBackend
+from .backends.dummy import EmailBackend as DummyEmailBackend
+from .backends.filebased import EmailBackend as FileEmailBackend
+from .backends.locmem import EmailBackend as MemoryEmailBackend
+from .backends.smtp import EmailBackend as SMTPEmailBackend
 # Imported for backwards compatibility and for the sake
 # of a cleaner namespace. These symbols used to be in
 # django/core/mail.py before the introduction of email
@@ -11,13 +17,7 @@ from .message import (
     EmailMultiAlternatives, Message, SafeMIMEMultipart, SafeMIMEText,
     forbid_multi_line_headers, make_msgid,
 )
-from .backends.console import EmailBackend as ConsoleEmailBackend
-from .backends.dummy import EmailBackend as DummyEmailBackend
-from .backends.filebased import EmailBackend as FileEmailBackend
-from .backends.locmem import EmailBackend as MemoryEmailBackend
-from .backends.smtp import EmailBackend as SMTPEmailBackend
 from .utils import DNS_NAME, CachedDnsName
-from .utils import import_string
 
 __all__ = [
     'CachedDnsName', 'DNS_NAME', 'EmailMessage', 'EmailMultiAlternatives',
@@ -54,6 +54,8 @@ class _MailMixin(object):
 
         if backend is None:
             klass = MAIL_BACKENDS[mailman.backend]
+        elif isinstance(backend, str):
+            klass = MAIL_BACKENDS[backend]
         else:
             klass = backend
 
