@@ -15,6 +15,10 @@ class ImproperlyConfigured(Exception):
 
 class EmailBackend(ConsoleEmailBackend):
     def __init__(self, *args, file_path=None, **kwargs):
+        # Since we're using the console-based backend as a base,
+        # force the stream to be None, so we don't default to stdout
+        kwargs['stream'] = None
+        super().__init__(*args, **kwargs)
         self._fname = None
         if file_path is not None:
             self.file_path = file_path
@@ -40,11 +44,6 @@ class EmailBackend(ConsoleEmailBackend):
         # Make sure that self.file_path is writable.
         if not os.access(self.file_path, os.W_OK):
             raise ImproperlyConfigured('Could not write to directory: %s' % self.file_path)
-        # Finally, call super().
-        # Since we're using the console-based backend as a base,
-        # force the stream to be None, so we don't default to stdout
-        kwargs['stream'] = None
-        super().__init__(*args, **kwargs)
 
     def write_message(self, message):
         self.stream.write(message.message().as_bytes() + b'\n')
