@@ -9,4 +9,4 @@ class TestInitialization(TestCase):
             self.app.testing
         )
 
-        self.assertEquals(self.mail.state.__dict__, mail.__dict__)
+        self.assertEqual(self.mail.state.__dict__, mail.__dict__)
