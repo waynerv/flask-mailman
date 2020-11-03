@@ -1,5 +1,5 @@
 import mimetypes
-from collections import Iterable
+from collections.abc import Iterable
 from email import (
     charset as Charset, encoders as Encoders, generator, message_from_string,
 )
@@ -518,7 +518,7 @@ class Message(EmailMultiAlternatives):
 
         super().__init__(subject, body, from_email=sender, to=recipients, bcc=bcc,
                          connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
-                         cc=cc, reply_to=[reply_to])
+                         cc=cc, reply_to=[reply_to] if reply_to is not None else None)
         self.encoding = charset
         self.date = date
         self.mail_options = mail_options or []
