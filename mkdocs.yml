@@ -1,0 +1,17 @@
+site_name: Flask-Mailman documentation
+theme:
+  name: material
+  palette:
+    scheme: preference
+    primary: teal
+    accent: amber
+  icon:
+    repo: fontawesome/brands/github-alt
+  logo: img/icon-white.svg
+  favicon: img/favicon.png
+  language: en
+repo_name: waynerv/flask-mailman
+repo_url: https://github.com/waynerv/flask-mailman
+nav:
+  - Tutorial: index.md
+  - release-notes.md

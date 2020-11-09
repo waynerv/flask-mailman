@@ -8,10 +8,7 @@ from .backends.dummy import EmailBackend as DummyEmailBackend
 from .backends.filebased import EmailBackend as FileEmailBackend
 from .backends.locmem import EmailBackend as MemoryEmailBackend
 from .backends.smtp import EmailBackend as SMTPEmailBackend
-# Imported for backwards compatibility and for the sake
-# of a cleaner namespace. These symbols used to be in
-# django/core/mail.py before the introduction of email
-# backends and the subsequent reorganization (See #10355)
+
 from .message import (
     DEFAULT_ATTACHMENT_MIME_TYPE, BadHeaderError, EmailMessage,
     EmailMultiAlternatives, Message, SafeMIMEMultipart, SafeMIMEText,
@@ -85,7 +82,7 @@ class _MailMixin(object):
         of the recipient list will see the other recipients in the 'To' field.
 
         If auth_user is None, use the MAIL_USERNAME setting.
-        If auth_password is None, use the MAIL_USERNAME setting.
+        If auth_password is None, use the MAIL_PASSWORD setting.
 
         Note: The API for this method is frozen. New code wanting to extend the
         functionality should use the EmailMessage class directly.
@@ -126,39 +123,10 @@ class _MailMixin(object):
         ]
         return connection.send_messages(messages)
 
-    def mail_admins(self, subject, body, fail_silently=False, connection=None,
-                    html_message=None):
-        """Send a message to the admins, as defined by the ADMINS setting."""
-        app = getattr(self, "app", None) or current_app
-        if not app.config['ADMINS']:
-            return
-        mail = EmailMultiAlternatives(
-            '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), body,
-            app.config['MAIL_ADMIN'], [a[1] for a in app.config['ADMINS']],
-            connection=connection,
-        )
-        if html_message:
-            mail.attach_alternative(html_message, 'text/html')
-        mail.send(fail_silently=fail_silently)
-
-    def mail_managers(self, subject, body, fail_silently=False, connection=None,
-                      html_message=None):
-        """Send a message to the managers, as defined by the MANAGERS setting."""
-        app = getattr(self, "app", None) or current_app
-        if not app.config['MANAGERS']:
-            return
-        mail = EmailMultiAlternatives(
-            '%s%s' % (app.config['MAIL_SUBJECT_PREFIX'], subject), body,
-            app.config['MAIL_ADMIN'], [a[1] for a in app.config['MANAGERS']],
-            connection=connection,
-        )
-        if html_message:
-            mail.attach_alternative(html_message, 'text/html')
-        mail.send(fail_silently=fail_silently)
-
 
 class _Mail(_MailMixin):
     """Initialize a state instance with all configs and methods"""
+
     def __init__(self, server, port, username, password, use_tls, use_ssl, default_sender, timeout, ssl_keyfile,
                  ssl_certfile, use_localtime, file_path, backend):
         self.server = server
