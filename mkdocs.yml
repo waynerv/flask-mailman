@@ -1,4 +1,4 @@
-site_name: Flask-Mailman documentation
+site_name: Flask-Mailman
 theme:
   name: material
   palette:
@@ -15,3 +15,9 @@ repo_url: https://github.com/waynerv/flask-mailman
 nav:
   - Tutorial: index.md
   - release-notes.md
+markdown_extensions:
+  - pymdownx.highlight:
+      linenums: false
+      linenums_style: pymdownx.inline
+  - pymdownx.superfences
+  - pymdownx.inlinehilite

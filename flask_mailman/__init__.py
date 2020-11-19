@@ -158,7 +158,7 @@ class Mail(_MailMixin):
             config.get('MAIL_TIMEOUT'),
             config.get('MAIL_SSL_KEYFILE'),
             config.get('MAIL_SSL_CERTFILE'),
-            config.get('MAIL_USE_LOCALTIME', True),
+            config.get('MAIL_USE_LOCALTIME', False),
             config.get('MAIL_FILE_PATH'),
             mail_backend,
         )

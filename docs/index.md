@@ -7,7 +7,7 @@ And following documentation is also a folk of Django's, but with a few differenc
 ## Installation
 
 Install with `pip`:
-```
+```bash
 pip install Flask-Mailman
 ```
 
@@ -59,18 +59,18 @@ Flask-Mailman is configured through the standard Flask config API. A list of con
 
 - **MAIL_BACKEND**: The backend to use for sending emails.
 
-    Default: 'smtp'. In addition the standard Flask TESTING configuration option is used for testing. When `TESTING=True` and `MAIL_BACKEND` is not provided, default will be set to 'memory'.
+    Default: 'smtp'. In addition the standard Flask TESTING configuration option is used for testing. When `TESTING=True` and `MAIL_BACKEND` is not provided, default will be set to 'locmem'.
 
 - **MAIL_FILE_PATH**: The directory used by the file email backend to store output files.
 
     Default: Not defined.
 
-- **MAIL_USE_LOCALTIME**: Whether to send the SMTP Date header of email messages in the local time zone (True) or in UTC (False).
+- **MAIL_USE_LOCALTIME**: Whether to send the SMTP **Date** header of email messages in the local time zone (True) or in UTC (False).
 
     Default: False.
     
 Emails are managed through a *Mail* instance:
-```
+```python
 from flask import Flask
 from flask_mailman import Mail
 
@@ -80,7 +80,10 @@ mail = Mail(app)
 In this case all emails are sent using the configuration values of the application that was passed to the *Mail* class constructor.
 
 Alternatively you can set up your *Mail* instance later at configuration time, using the `init_app` method:
-```
+```python
+from flask import Flask
+from flask_mailman import Mail
+
 mail = Mail()
 
 app = Flask(__name__)
@@ -91,7 +94,7 @@ In this case emails will be sent using the configuration values from Flask’s `
 ## Sending messages
 
 To send a message first create a `EmailMessage` instance:
-```
+```python hl_lines="3-11"
 from flask_mailman import EmailMessage
 
 msg = EmailMessage(
@@ -103,9 +106,21 @@ msg = EmailMessage(
     reply_to=['another@example.com'],
     headers={'Message-ID': 'foo'},
 )
+msg.send()
 ```
-Then send the message:
-```
+Then send the message using `send()` method:
+```python hl_lines="12 13"
+from flask_mailman import EmailMessage
+
+msg = EmailMessage(
+    'Hello',
+    'Body goes here',
+    'from@example.com',
+    ['to1@example.com', 'to2@example.com'],
+    ['bcc@example.com'],
+    reply_to=['another@example.com'],
+    headers={'Message-ID': 'foo'},
+)
 msg.send()
 ```
 
@@ -130,7 +145,12 @@ If a connection was specified when the email was constructed, that connection wi
 
 By default, the **MIME** type of the body parameter in an `EmailMessage` is "text/plain". It is good practice to leave this alone, because it guarantees that any recipient will be able to read the email, regardless of their mail client. However, if you are confident that your recipients can handle an alternative content type, you can use the `content_subtype` attribute on the `EmailMessage` class to change the main content type. The major type will always be "text", but you can change the subtype. For example:
 
-```
+```python
+from flask_mailman import EmailMessage
+
+subject, from_email, to = 'hello', 'from@example.com', 'to@example.com'
+html_content = '<p>This is an <strong>important</strong> message.</p>'
+
 msg = EmailMessage(subject, html_content, from_email, [to])
 msg.content_subtype = "html"  # Main content is now text/html
 msg.send()
@@ -146,8 +166,12 @@ Firstly, you can use the `send_messages()` method. `send_messages()` takes a lis
 
 For example, if you have a function called `get_notification_email()` that returns a list of `EmailMessage` objects representing some periodic email you wish to send out, you could send these emails using a single call to `send_messages`:
 
-```
-# import Mail instance from somewhere
+```python
+from flask import Flask
+from flask_mailman import Mail
+
+app = Flask(__name__)
+mail = Mail(app)
 
 connection = mail.get_connection()   # Use default email connection
 messages = get_notification_email()
@@ -158,8 +182,13 @@ In this example, the call to `send_messages()` opens a connection on the backend
 
 The second approach is to use the `open()` and `close()` methods on the email backend to manually control the connection. `send_messages()` will not manually open or close the connection if it is already open, so if you manually open the connection, you can control when it is closed. For example:
 
-```
-# import Mail instance from somewhere
+```python
+from flask import Flask
+from flask_mailman import Mail, EmailMessage
+
+app = Flask(__name__)
+mail = Mail(app)
+
 connection = mail.get_connection()
 
 # Manually open the connection
@@ -226,9 +255,13 @@ You can use the following two methods to adding attachments:
     
     For **MIME** types starting with text/, binary data is handled as in `attach()`.
 
-## Header injection
+## Preventing header injection
 
-To prevent header injection attempts to send a message with newlines in the subject, sender or recipient addresses will result in a `BadHeaderError`.
+Header injection is a security exploit in which an attacker inserts extra email headers to control the “To:” and “From:” in email messages that your scripts generate.
+
+The Flask-Mailman email methods outlined above all protect against header injection by forbidding newlines in header values. If any `subject`, `from_email` or `recipient_list` contains a newline (in either Unix, Windows or Mac style), the email method (e.g. `send_mail()`) will raise `flask_mailman.BadHeaderError` (a subclass of `ValueError`) and, hence, will not send the email. It’s your responsibility to validate all data before passing it to the email functions.
+
+If a message contains headers at the start of the string, the headers will be printed as the first bit of the email message.
 
 ## Sending alternative content types
 
@@ -236,7 +269,7 @@ It can be useful to include multiple versions of the content in an email; the cl
 
 To send a text and HTML combination, you could write:
 
-```
+```python
 from flask_mailman import EmailMultiAlternatives
 
 subject, from_email, to = 'hello', 'from@example.com', 'to@example.com'
@@ -259,8 +292,12 @@ The email backend class has the following methods:
 `send_messages(email_messages)` sends a list of `EmailMessage` objects. If the connection is not open, this call will implicitly open the connection, and close the connection afterwards. If the connection is already open, it will be left open after mail has been sent.
 It can also be used as a context manager, which will automatically call `open()` and `close()` as needed:
 
-```
-# import Mail instance from somewhere
+```python
+from flask import Flask
+from flask_mailman import Mail
+
+app = Flask(__name__)
+mail = Mail(app)
 
 with mail.get_connection() as connection:
     mail.EmailMessage(
@@ -277,8 +314,8 @@ with mail.get_connection() as connection:
 
 The `get_connection()` method of **Mail** instance returns an instance of the email backend that you can use.
 
-```
-mail.get_connection(backend=None, fail_silently=False, *args, **kwargs)
+```python
+Mail.get_connection(backend=None, fail_silently=False, *args, **kwargs)
 ```
 By default, a call to `get_connection()` will return an instance of the email backend specified in MAIL_BACKEND configuration. If you specify the backend argument, an instance of that backend will be instantiated.
 
@@ -290,7 +327,7 @@ Flask-Mailman ships with several email sending backends. With the exception of t
 
 ### SMTP backend
 
-```
+```python
 class backends.smtp.EmailBackend(
     host=None,
     port=None,
@@ -412,8 +449,12 @@ Each separate element of datatuple results in a separate email message. As in `s
 
 For example, the following code would send two different messages to two different sets of recipients; however, only one connection to the mail server would be opened:
 
-```
-# import Mail instance from somewhere
+```python
+from flask import Flask
+from flask_mailman import Mail
+
+app = Flask(__name__)
+mail = Mail(app)
 
 message1 = ('Subject here', 'Here is the message', 'from@example.com', ['first@example.com', 'other@example.com'])
 message2 = ('Another Subject', 'Here is another message', 'from@example.com', ['second@test.com'])
