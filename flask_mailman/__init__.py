@@ -11,7 +11,7 @@ from .backends.smtp import EmailBackend as SMTPEmailBackend
 
 from .message import (
     DEFAULT_ATTACHMENT_MIME_TYPE, BadHeaderError, EmailMessage,
-    EmailMultiAlternatives, Message, SafeMIMEMultipart, SafeMIMEText,
+    EmailMultiAlternatives, SafeMIMEMultipart, SafeMIMEText,
     forbid_multi_line_headers, make_msgid,
 )
 from .utils import DNS_NAME, CachedDnsName
@@ -20,15 +20,14 @@ __all__ = [
     'CachedDnsName', 'DNS_NAME', 'EmailMessage', 'EmailMultiAlternatives',
     'SafeMIMEText', 'SafeMIMEMultipart', 'DEFAULT_ATTACHMENT_MIME_TYPE',
     'make_msgid', 'BadHeaderError', 'forbid_multi_line_headers',
-    '_MailMixin', 'Mail', 'Message', 'ConsoleEmailBackend', 'DummyEmailBackend', 'FileEmailBackend',
-    'MemoryEmailBackend', 'SMTPEmailBackend'
+    'Mail',
 ]
 
 MAIL_BACKENDS = {
     'console': ConsoleEmailBackend,
     'dummy': DummyEmailBackend,
     'file': FileEmailBackend,
-    'memory': MemoryEmailBackend,
+    'locmem': MemoryEmailBackend,
     'smtp': SMTPEmailBackend
 }
 
@@ -58,23 +57,7 @@ class _MailMixin(object):
 
         return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 
-    def send(self, mail, fail_silently=False):
-        """Sends a single message instance. If TESTING is True the message will
-        not actually be sent.
-
-        :param mail: a Message instance.
-        :param fail_silently: A boolean. When it's False, send() will raise an smtplib.SMTPException if an error occurs.
-        """
-        if not mail.recipients():
-            # Don't bother creating the network connection if there's nobody to
-            # send to.
-            return 0
-        if not mail.connection:
-            mail.connection = self.get_connection(fail_silently=fail_silently)
-
-        return mail.connection.send_messages([mail])
-
-    def send_mail(self, subject, body, from_email, recipient_list,
+    def send_mail(self, subject, message, from_email, recipient_list,
                   fail_silently=False, auth_user=None, auth_password=None,
                   connection=None, html_message=None):
         """
@@ -92,7 +75,7 @@ class _MailMixin(object):
             password=auth_password,
             fail_silently=fail_silently,
         )
-        mail = EmailMultiAlternatives(subject, body, from_email, recipient_list, connection=connection)
+        mail = EmailMultiAlternatives(subject, message, from_email, recipient_list, connection=connection)
         if html_message:
             mail.attach_alternative(html_message, 'text/html')
 
@@ -118,8 +101,8 @@ class _MailMixin(object):
             fail_silently=fail_silently,
         )
         messages = [
-            EmailMessage(subject, body, sender, recipient, connection=connection)
-            for subject, body, sender, recipient in datatuple
+            EmailMessage(subject, message, sender, recipient, connection=connection)
+            for subject, message, sender, recipient in datatuple
         ]
         return connection.send_messages(messages)
 
@@ -161,13 +144,11 @@ class Mail(_MailMixin):
     def init_mail(config, testing=False):
         # Set default mail backend in different environment
         mail_backend = config.get('MAIL_BACKEND')
-        if mail_backend not in MAIL_BACKENDS.keys() and testing:
-            mail_backend = 'memory'
-        elif mail_backend not in MAIL_BACKENDS.keys():
-            mail_backend = 'smtp'
+        if mail_backend is None or mail_backend not in MAIL_BACKENDS.keys():
+            mail_backend = 'locmem' if testing else 'smtp'
 
         return _Mail(
-            config.get('MAIL_SERVER', '127.0.0.1'),
+            config.get('MAIL_SERVER', 'localhost'),
             config.get('MAIL_PORT', 25),
             config.get('MAIL_USERNAME'),
             config.get('MAIL_PASSWORD'),
