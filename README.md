@@ -8,10 +8,9 @@ It was meant to replace unmaintained Flask-Mail with a better warranty and more 
 
 Flask-Mail ported Django's email implementation to your Flask applications, which may be the best mail sending implementation that's available for python.
 
-The way of using this extension is almost the same as Flask-Mail and also Django.
+The way of using this extension is almost the same as Django.
 
-You can just read their documentation and choose a preferred style.
+Documentation: https://waynerv.github.io/flask-mailman.
 
-Django documentation: https://docs.djangoproject.com/en/2.2/topics/email/
-
-Flask-Mail documentation: http://packages.python.org/Flask-Mail
+Note: A few breaking changes have been made in v0.2.0 version to ensure that API of this extension is basically the same as Django. 
+Users migrating from Flask-Mail should upgrade with caution.
