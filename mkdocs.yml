@@ -3,8 +3,8 @@ theme:
   name: material
   palette:
     scheme: preference
-    primary: teal
-    accent: amber
+    primary: indigo
+    accent: indigo
   icon:
     repo: fontawesome/brands/github-alt
   logo: img/icon-white.svg
