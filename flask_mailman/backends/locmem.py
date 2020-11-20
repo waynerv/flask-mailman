@@ -1,7 +1,6 @@
 """
 Backend for test environment.
 """
-from flask_mailman.message import sanitize_address
 from .base import BaseEmailBackend
 
 
@@ -28,14 +27,3 @@ class EmailBackend(BaseEmailBackend):
             self.mailman.outbox.append(message)
             msg_count += 1
         return msg_count
-
-    def _send(self, email_message):
-        """Redirect a single message to the dummy outbox and sanitize addresses"""
-        if not email_message.recipients():
-            return False
-        encoding = email_message.encoding or 'utf-8'
-        from_email = sanitize_address(email_message.from_email, encoding)
-        recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
-        message = email_message.message()
-        self.mailman.outbox.append(email_message)
-        return True

@@ -1,11 +1,10 @@
 """SMTP email backend class."""
 import smtplib
-import socket
 import ssl
 import threading
 
 from .base import BaseEmailBackend
-from ..message import sanitize_address
+from ..message import sanitize_address, DEFAULT_CHARSET
 from ..utils import DNS_NAME
 
 
@@ -69,7 +68,7 @@ class EmailBackend(BaseEmailBackend):
             if self.username and self.password:
                 self.connection.login(self.username, self.password)
             return True
-        except (smtplib.SMTPException, socket.error):
+        except OSError:
             if not self.fail_silently:
                 raise
 
@@ -118,13 +117,12 @@ class EmailBackend(BaseEmailBackend):
         """A helper method that does the actual sending."""
         if not email_message.recipients():
             return False
-        encoding = email_message.encoding or 'utf-8'
+        encoding = email_message.encoding or DEFAULT_CHARSET
         from_email = sanitize_address(email_message.from_email, encoding)
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()
         try:
-            self.connection.sendmail(from_email, recipients, message.as_bytes(linesep='\r\n'),
-                                     email_message.mail_options, email_message.rcpt_options)
+            self.connection.sendmail(from_email, recipients, message.as_bytes(linesep='\r\n'))
         except smtplib.SMTPException:
             if not self.fail_silently:
                 raise

@@ -1,24 +1,23 @@
 import mimetypes
-from collections.abc import Iterable
 from email import (
     charset as Charset, encoders as Encoders, generator, message_from_string,
 )
-from email.errors import InvalidHeaderDefect, NonASCIILocalPartDefect
+from email.errors import HeaderParseError
 from email.header import Header
-from email.headerregistry import Address
-from email.message import Message as BasicMessage
+from email.headerregistry import Address, parser
+from email.message import Message
 from email.mime.base import MIMEBase
 from email.mime.message import MIMEMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate, getaddresses, make_msgid, parseaddr
+from email.utils import formataddr, formatdate, getaddresses, make_msgid
 from io import BytesIO, StringIO
 from pathlib import Path
 
 from flask import current_app
 
 from .utils import DNS_NAME
-from .utils import force_text
+from .utils import force_str, punycode
 
 # Don't BASE64-encode UTF-8 messages so that we avoid unwanted attention from
 # some spam filters.
@@ -75,56 +74,49 @@ def forbid_multi_line_headers(name, val, encoding):
     return name, val
 
 
-def split_addr(addr, encoding):
-    """
-    Split the address into local part and domain and encode them.
-
-    When non-ascii characters are present in the local part, it must be
-    MIME-word encoded. The domain name must be idna-encoded if it contains
-    non-ascii characters.
-    """
-    if '@' in addr:
-        localpart, domain = addr.split('@', 1)
-        # Try to get the simplest encoding - ascii if possible so that
-        # to@example.com doesn't become =?utf-8?q?to?=@example.com. This
-        # makes unit testing a bit easier and more readable.
-        try:
-            localpart.encode('ascii')
-        except UnicodeEncodeError:
-            localpart = Header(localpart, encoding).encode()
-        domain = domain.encode('idna').decode('ascii')
-    else:
-        localpart = Header(addr, encoding).encode()
-        domain = ''
-    return (localpart, domain)
-
-
 def sanitize_address(addr, encoding):
     """
     Format a pair of (name, address) or an email address string.
     """
+    address = None
     if not isinstance(addr, tuple):
-        addr = parseaddr(addr)
-    nm, addr = addr
-    localpart, domain = None, None
-    nm = Header(nm, encoding).encode()
-    try:
-        addr.encode('ascii')
-    except UnicodeEncodeError:  # IDN or non-ascii in the local part
-        localpart, domain = split_addr(addr, encoding)
+        addr = force_str(addr)
+        try:
+            token, rest = parser.get_mailbox(addr)
+        except (HeaderParseError, ValueError, IndexError):
+            raise ValueError('Invalid address "%s"' % addr)
+        else:
+            if rest:
+                # The entire email address must be parsed.
+                raise ValueError(
+                    'Invalid address; only %s could be parsed from "%s"'
+                    % (token, addr)
+                )
+            nm = token.display_name or ''
+            localpart = token.local_part
+            domain = token.domain or ''
+    else:
+        nm, address = addr
+        localpart, domain = address.rsplit('@', 1)
 
-    # An `email.headerregistry.Address` object is used since
-    # email.utils.formataddr() naively encodes the name as ascii (see #25986).
-    if localpart and domain:
-        address = Address(nm, username=localpart, domain=domain)
-        return str(address)
+    address_parts = nm + localpart + domain
+    if '\n' in address_parts or '\r' in address_parts:
+        raise ValueError('Invalid address; address parts cannot contain newlines.')
 
+    # Avoid UTF-8 encode, if it's possible.
     try:
-        address = Address(nm, addr_spec=addr)
-    except (InvalidHeaderDefect, NonASCIILocalPartDefect):
-        localpart, domain = split_addr(addr, encoding)
-        address = Address(nm, username=localpart, domain=domain)
-    return str(address)
+        nm.encode('ascii')
+        nm = Header(nm).encode()
+    except UnicodeEncodeError:
+        nm = Header(nm, encoding).encode()
+    try:
+        localpart.encode('ascii')
+    except UnicodeEncodeError:
+        localpart = Header(localpart, encoding).encode()
+    domain = punycode(domain)
+
+    parsed_address = Address(username=localpart, domain=domain)
+    return formataddr((nm, parsed_address.addr_spec))
 
 
 class MIMEMixin:
@@ -176,8 +168,8 @@ class SafeMIMEText(MIMEMixin, MIMEText):
     def set_payload(self, payload, charset=None):
         if charset == 'utf-8' and not isinstance(charset, Charset.Charset):
             has_long_lines = any(
-                len(l.encode()) > RFC5322_EMAIL_LINE_LENGTH_LIMIT
-                for l in payload.splitlines()
+                len(line.encode()) > RFC5322_EMAIL_LINE_LENGTH_LIMIT
+                for line in payload.splitlines()
             )
             # Quoted-Printable encoding has the side effect of shortening long
             # lines, if any (#22561).
@@ -200,7 +192,7 @@ class EmailMessage:
     """A container for email information."""
     content_subtype = 'plain'
     mixed_subtype = 'mixed'
-    encoding = None  # None => use settings default
+    encoding = None     # None => use settings default
 
     def __init__(self, subject='', body='', from_email=None, to=None, bcc=None,
                  connection=None, attachments=None, headers=None, cc=None,
@@ -233,11 +225,7 @@ class EmailMessage:
             self.reply_to = list(reply_to)
         else:
             self.reply_to = []
-        # Deal with tuple format from_email parameter
-        from_email = from_email or current_app.extensions['mailman'].default_sender
-        if isinstance(from_email, tuple):
-            from_email = '%s <%s>' % from_email
-        self.from_email = from_email
+        self.from_email = from_email or current_app.extensions['mailman'].default_sender
         self.subject = subject
         self.body = body or ''
         self.attachments = []
@@ -249,10 +237,6 @@ class EmailMessage:
                     self.attach(*attachment)
         self.extra_headers = headers or {}
         self.connection = connection
-
-        # Flask-Mail feature
-        self.mail_options = []
-        self.rcpt_options = []
 
     def get_connection(self, fail_silently=False):
         if not self.connection:
@@ -374,7 +358,7 @@ class EmailMessage:
         Convert the content, mimetype pair into a MIME attachment object.
 
         If the mimetype is message/rfc822, content may be an
-        email.Message(import as BasicMessage) or EmailMessage object, as well as a str.
+        email.Message or EmailMessage object, as well as a str.
         """
         basetype, subtype = mimetype.split('/', 1)
         if basetype == 'text':
@@ -384,12 +368,12 @@ class EmailMessage:
             # Bug #18967: per RFC2046 s5.2.1, message/rfc822 attachments
             # must not be base64 encoded.
             if isinstance(content, EmailMessage):
-                # convert content into an email.Message(import as BasicMessage) first
+                # convert content into an email.Message first
                 content = content.message()
-            elif not isinstance(content, BasicMessage):
+            elif not isinstance(content, Message):
                 # For compatibility with existing code, parse the message
-                # into an email.Message(import as BasicMessage) object if it is not one already.
-                content = message_from_string(force_text(content))
+                # into an email.Message object if it is not one already.
+                content = message_from_string(force_str(content))
 
             attachment = SafeMIMEMessage(content, subtype)
         else:
@@ -466,91 +450,3 @@ class EmailMultiAlternatives(EmailMessage):
             for alternative in self.alternatives:
                 msg.attach(self._create_mime_attachment(*alternative))
         return msg
-
-
-class Message(EmailMultiAlternatives):
-    """Encapsulates an email message.
-
-    :param subject: email subject header
-    :param recipients: list of email addresses
-    :param body: plain text message
-    :param html: HTML message
-    :param alts: A dict or an iterable to go through dict() that contains multipart alternatives
-    :param sender: email sender address, or **MAIL_DEFAULT_SENDER** by default
-    :param cc: CC list
-    :param bcc: BCC list
-    :param attachments: list of MIMEText instances or (filename, content, mimetype) tuple
-    :param reply_to: reply-to address
-    :param date: send date
-    :param charset: message character set
-    :param extra_headers: A dictionary of additional headers for the message
-    :param mail_options: A list of ESMTP options to be used in MAIL FROM command
-    :param rcpt_options:  A list of ESMTP options to be used in RCPT commands
-    """
-
-    def __init__(self, subject='',
-                 recipients=None,
-                 body='',
-                 html=None,
-                 alts=None,
-                 sender=None,
-                 cc=None,
-                 bcc=None,
-                 attachments=None,
-                 reply_to=None,
-                 date=None,
-                 charset=None,
-                 extra_headers=None,
-                 mail_options=None,
-                 rcpt_options=None,
-                 connection=None):
-        # Deal with alts parameter
-        if isinstance(alts, dict):
-            alts = [data[::-1] for data in list(alts.items())]
-        elif isinstance(alts, Iterable):
-            alts = [tuple(data[::-1]) for data in list(alts)]
-        else:
-            alts = None
-        # Deal with date parameter
-        if date:
-            extra_headers = {} if extra_headers is None else extra_headers
-            extra_headers['Date'] = formatdate(date, localtime=current_app.extensions['mailman'].use_localtime)
-
-        super().__init__(subject, body, from_email=sender, to=recipients, bcc=bcc,
-                         connection=connection, attachments=attachments, headers=extra_headers, alternatives=alts,
-                         cc=cc, reply_to=[reply_to] if reply_to is not None else None)
-        self.encoding = charset
-        self.date = date
-        self.mail_options = mail_options or []
-        self.rcpt_options = rcpt_options or []
-        if html:
-            self.attach_alternative(html, 'text/html')
-
-    @property
-    def html(self):
-        for alts_content in reversed(self.alternatives):
-            if alts_content[-1] == 'text/html':
-                return alts_content[0]
-        return None
-
-    @html.setter
-    def html(self, content):
-        if content is None:
-            for alts_content in reversed(self.alternatives):
-                if alts_content[-1] == 'text/html':
-                    self.alternatives.remove(alts_content)
-                    break
-        else:
-            assert content is not None
-            self.alternatives.append((content, 'text/html'))
-
-    def add_recipient(self, recipient):
-        """Adds another recipient to the message.
-
-        :param recipient: email address of recipient.
-        """
-
-        self.to.append(recipient)
-
-    def __str__(self):
-        return self.message().as_string()

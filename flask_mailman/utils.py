@@ -44,9 +44,9 @@ def is_protected_type(obj):
     return isinstance(obj, _PROTECTED_TYPES)
 
 
-def force_text(s, encoding='utf-8', strings_only=False, errors='strict'):
+def force_str(s, encoding='utf-8', strings_only=False, errors='strict'):
     """
-    Similar to smart_text, except that lazy instances are resolved to
+    Similar to smart_str(), except that lazy instances are resolved to
     strings, rather than kept as lazy objects.
 
     If strings_only is True, don't convert (some) non-string-like objects.
@@ -64,3 +64,8 @@ def force_text(s, encoding='utf-8', strings_only=False, errors='strict'):
     except UnicodeDecodeError as e:
         raise FlaskUnicodeDecodeError(s, *e.args)
     return s
+
+
+def punycode(domain):
+    """Return the Punycode of the given domain if it's non-ASCII."""
+    return domain.encode('idna').decode('ascii')
