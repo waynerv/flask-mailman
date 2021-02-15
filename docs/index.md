@@ -2,7 +2,7 @@
 
 The core part of this extension's source code comes directly from Django's mail module.
 
-And following documentation is also a folk of Django's, but with a few differences.
+And following documentation is also a folk of Django's, but with a few [differences](#differences-with-django).
 
 ## Installation
 
@@ -465,3 +465,9 @@ mail.send_mass_mail((message1, message2), fail_silently=False)
 ### send_mass_mail() vs. send_mail()
 
 The main difference between `send_mass_mail()` and `send_mail()` is that `send_mail()` opens a connection to the mail server each time it’s executed, while `send_mass_mail()` uses a single connection for all of its messages. This makes `send_mass_mail()` slightly more efficient.
+
+## Differences with Django
+
+The name of configuration keys is different here, but you can easily resolve it.
+
+`mail_admins()` and `mail_managers()` methods were removed, you can write an alternative one in a minute if you need.
