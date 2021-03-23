@@ -48,15 +48,15 @@ class _MailMixin(object):
         except KeyError:
             raise RuntimeError("The current application was not configured with Flask-Mailman")
 
-        if backend is None:
-            klass = MAIL_BACKENDS[mailman.backend]
-        elif isinstance(backend, str):
-            try:
+        try:
+            if backend is None:
+                klass = MAIL_BACKENDS[mailman.backend]
+            elif isinstance(backend, str):
                 klass = MAIL_BACKENDS[backend]
-            except KeyError:
-                raise RuntimeError("The available built-in mail backends are: {}".format(', '.join(MAIL_BACKENDS.keys())))
-        else:
-            klass = backend
+            else:
+                klass = backend
+        except KeyError:
+            raise RuntimeError("The available built-in mail backends are: {}".format(', '.join(MAIL_BACKENDS.keys())))
 
         return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 
