@@ -1,6 +1,7 @@
 import unittest
 from contextlib import contextmanager
 
+import pytest
 from flask import Flask
 
 from flask_mailman import Mail
@@ -58,3 +59,7 @@ class TestCase(unittest.TestCase):
         if hasattr(unittest.TestCase, 'assertIsNotNone'):
             return unittest.TestCase.assertIsNotNone(self, obj, msg)
         return self.assertTrue(obj is not None)
+
+    @pytest.fixture(autouse=True)
+    def capsys(self, capsys):
+        self.capsys = capsys
