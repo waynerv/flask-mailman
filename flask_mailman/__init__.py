@@ -3,18 +3,18 @@ Tools for sending email.
 """
 from flask import current_app
 
-from .backends.console import EmailBackend as ConsoleEmailBackend
-from .backends.dummy import EmailBackend as DummyEmailBackend
-from .backends.filebased import EmailBackend as FileEmailBackend
-from .backends.locmem import EmailBackend as MemoryEmailBackend
-from .backends.smtp import EmailBackend as SMTPEmailBackend
+from flask_mailman.backends.console import EmailBackend as ConsoleEmailBackend
+from flask_mailman.backends.dummy import EmailBackend as DummyEmailBackend
+from flask_mailman.backends.filebased import EmailBackend as FileEmailBackend
+from flask_mailman.backends.locmem import EmailBackend as MemoryEmailBackend
+from flask_mailman.backends.smtp import EmailBackend as SMTPEmailBackend
 
 from .message import (
     DEFAULT_ATTACHMENT_MIME_TYPE, BadHeaderError, EmailMessage,
     EmailMultiAlternatives, SafeMIMEMultipart, SafeMIMEText,
     forbid_multi_line_headers, make_msgid,
 )
-from .utils import DNS_NAME, CachedDnsName
+from flask_mailman.utils import DNS_NAME, CachedDnsName
 
 __all__ = [
     'CachedDnsName', 'DNS_NAME', 'EmailMessage', 'EmailMultiAlternatives',
@@ -51,7 +51,10 @@ class _MailMixin(object):
         if backend is None:
             klass = MAIL_BACKENDS[mailman.backend]
         elif isinstance(backend, str):
-            klass = MAIL_BACKENDS[backend]
+            try:
+                klass = MAIL_BACKENDS[backend]
+            except KeyError:
+                raise RuntimeError("The available built-in mail backends are: {}".format(', '.join(MAIL_BACKENDS.keys())))
         else:
             klass = backend
 
@@ -111,7 +114,7 @@ class _Mail(_MailMixin):
     """Initialize a state instance with all configs and methods"""
 
     def __init__(self, server, port, username, password, use_tls, use_ssl, default_sender, timeout, ssl_keyfile,
-                 ssl_certfile, use_localtime, file_path, backend):
+                 ssl_certfile, use_localtime, file_path, default_charset, backend):
         self.server = server
         self.port = port
         self.username = username
@@ -124,6 +127,7 @@ class _Mail(_MailMixin):
         self.ssl_certfile = ssl_certfile
         self.use_localtime = use_localtime
         self.file_path = file_path
+        self.default_charset = default_charset
         self.backend = backend
 
 
@@ -160,6 +164,7 @@ class Mail(_MailMixin):
             config.get('MAIL_SSL_CERTFILE'),
             config.get('MAIL_USE_LOCALTIME', False),
             config.get('MAIL_FILE_PATH'),
+            config.get('MAIL_DEFAULT_CHARSET', 'utf-8'),
             mail_backend,
         )
 

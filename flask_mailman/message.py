@@ -16,8 +16,8 @@ from pathlib import Path
 
 from flask import current_app
 
-from .utils import DNS_NAME
-from .utils import force_str, punycode
+from flask_mailman.utils import DNS_NAME
+from flask_mailman.utils import force_str, punycode
 
 # Don't BASE64-encode UTF-8 messages so that we avoid unwanted attention from
 # some spam filters.
@@ -31,8 +31,6 @@ utf8_charset_qp.body_encoding = Charset.QP
 DEFAULT_ATTACHMENT_MIME_TYPE = 'application/octet-stream'
 
 RFC5322_EMAIL_LINE_LENGTH_LIMIT = 998
-
-DEFAULT_CHARSET = 'utf-8'
 
 
 class BadHeaderError(ValueError):
@@ -57,7 +55,7 @@ ADDRESS_HEADERS = {
 
 def forbid_multi_line_headers(name, val, encoding):
     """Forbid multi-line headers to prevent header injection."""
-    encoding = encoding or DEFAULT_CHARSET
+    encoding = encoding or current_app.extensions['mailman'].default_charset
     val = str(val)  # val may be lazy
     if '\n' in val or '\r' in val:
         raise BadHeaderError("Header values can't contain newlines (got %r for header %r)" % (val, name))
@@ -247,7 +245,7 @@ class EmailMessage:
         return self.connection
 
     def message(self):
-        encoding = self.encoding or DEFAULT_CHARSET
+        encoding = self.encoding or current_app.extensions['mailman'].default_charset
         msg = SafeMIMEText(self.body, self.content_subtype, encoding)
         msg = self._create_message(msg)
         msg['Subject'] = self.subject
@@ -301,11 +299,15 @@ class EmailMessage:
         mimetype to DEFAULT_ATTACHMENT_MIME_TYPE and don't decode the content.
         """
         if isinstance(filename, MIMEBase):
-            assert content is None
-            assert mimetype is None
+            if content is not None or mimetype is not None:
+                raise ValueError(
+                    'content and mimetype must not be given when a MIMEBase '
+                    'instance is provided.'
+                )
             self.attachments.append(filename)
+        elif content is None:
+            raise ValueError('content must be provided.')
         else:
-            assert content is not None
             mimetype = mimetype or mimetypes.guess_type(filename)[0] or DEFAULT_ATTACHMENT_MIME_TYPE
             basetype, subtype = mimetype.split('/', 1)
 
@@ -341,7 +343,7 @@ class EmailMessage:
 
     def _create_attachments(self, msg):
         if self.attachments:
-            encoding = self.encoding or DEFAULT_CHARSET
+            encoding = self.encoding or current_app.extensions['mailman'].default_charset
             body_msg = msg
             msg = SafeMIMEMultipart(_subtype=self.mixed_subtype, encoding=encoding)
             if self.body or body_msg.is_multipart():
@@ -362,7 +364,7 @@ class EmailMessage:
         """
         basetype, subtype = mimetype.split('/', 1)
         if basetype == 'text':
-            encoding = self.encoding or DEFAULT_CHARSET
+            encoding = self.encoding or current_app.extensions['mailman'].default_charset
             attachment = SafeMIMEText(content, subtype, encoding)
         elif basetype == 'message' and subtype == 'rfc822':
             # Bug #18967: per RFC2046 s5.2.1, message/rfc822 attachments
@@ -433,15 +435,15 @@ class EmailMultiAlternatives(EmailMessage):
 
     def attach_alternative(self, content, mimetype):
         """Attach an alternative content representation."""
-        assert content is not None
-        assert mimetype is not None
+        if content is None or mimetype is None:
+            raise ValueError('Both content and mimetype must be provided.')
         self.alternatives.append((content, mimetype))
 
     def _create_message(self, msg):
         return self._create_attachments(self._create_alternatives(msg))
 
     def _create_alternatives(self, msg):
-        encoding = self.encoding or DEFAULT_CHARSET
+        encoding = self.encoding or current_app.extensions['mailman'].default_charset
         if self.alternatives:
             body_msg = msg
             msg = SafeMIMEMultipart(_subtype=self.alternative_subtype, encoding=encoding)

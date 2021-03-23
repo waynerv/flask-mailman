@@ -3,9 +3,9 @@ import smtplib
 import ssl
 import threading
 
-from .base import BaseEmailBackend
-from ..message import sanitize_address, DEFAULT_CHARSET
-from ..utils import DNS_NAME
+from flask_mailman.backends.base import BaseEmailBackend
+from flask_mailman.message import sanitize_address
+from flask_mailman.utils import DNS_NAME
 
 
 class EmailBackend(BaseEmailBackend):
@@ -117,7 +117,7 @@ class EmailBackend(BaseEmailBackend):
         """A helper method that does the actual sending."""
         if not email_message.recipients():
             return False
-        encoding = email_message.encoding or DEFAULT_CHARSET
+        encoding = email_message.encoding or self.mailman.default_charset
         from_email = sanitize_address(email_message.from_email, encoding)
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()

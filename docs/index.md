@@ -2,7 +2,7 @@
 
 The core part of this extension's source code comes directly from Django's mail module.
 
-And following documentation is also a folk of Django's, but with a few differences.
+And following documentation is also a folk of Django's, but with a few [differences](#differences-with-django).
 
 ## Installation
 
@@ -139,7 +139,10 @@ All parameters are optional and can be set at any time prior to calling the `sen
 - **reply_to**: A list or tuple of recipient addresses used in the “Reply-To” header when sending the email.
 
 `EmailMessage.send(fail_silently=False)` sends the message. 
-If a connection was specified when the email was constructed, that connection will be used. Otherwise, an instance of the default backend will be instantiated and used. If the keyword argument `fail_silently` is True, exceptions raised while sending the message will be quashed. An empty list of recipients will not raise an exception.
+
+If a connection was specified when the email was constructed, that connection will be used. Otherwise, an instance of the default backend will be instantiated and used. 
+
+If the keyword argument `fail_silently` is True, exceptions raised while sending the message will be quashed. An empty list of recipients will not raise an exception.
 
 ### Sending html content
 
@@ -205,13 +208,13 @@ email1 = EmailMessage(
 email1.send() # Send the email
 
 # Construct two more messages
-email2 = mail.EmailMessage(
+email2 = EmailMessage(
     'Hello',
     'Body goes here',
     'from@example.com',
     ['to2@example.com'],
 )
-email3 = mail.EmailMessage(
+email3 = EmailMessage(
     'Hello',
     'Body goes here',
     'from@example.com',
@@ -223,6 +226,40 @@ connection.send_messages([email2, email3])
 # The connection was already open so send_messages() doesn't close it.
 # We need to manually close the connection.
 connection.close()
+```
+
+Of course there is always a short writing using `with`:
+
+```python
+from flask import Flask
+from flask_mailman import Mail, EmailMessage
+
+app = Flask(__name__)
+mail = Mail(app)
+
+with mail.get_connection() as conn:
+    email1 = EmailMessage(
+    'Hello',
+    'Body goes here',
+    'from@example.com',
+    ['to1@example.com'],
+    connection=conn,
+    )
+    email1.send()
+    
+    email2 = EmailMessage(
+        'Hello',
+        'Body goes here',
+        'from@example.com',
+        ['to2@example.com'],
+    )
+    email3 = EmailMessage(
+        'Hello',
+        'Body goes here',
+        'from@example.com',
+        ['to3@example.com'],
+    )
+    conn.send_messages([email2, email3])
 ```
 
 ## Attachments
@@ -465,3 +502,9 @@ mail.send_mass_mail((message1, message2), fail_silently=False)
 ### send_mass_mail() vs. send_mail()
 
 The main difference between `send_mass_mail()` and `send_mail()` is that `send_mail()` opens a connection to the mail server each time it’s executed, while `send_mass_mail()` uses a single connection for all of its messages. This makes `send_mass_mail()` slightly more efficient.
+
+## Differences with Django
+
+The name of configuration keys is different here, but you can easily resolve it.
+
+`mail_admins()` and `mail_managers()` methods were removed, you can write an alternative one in a minute if you need.
