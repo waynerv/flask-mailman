@@ -51,7 +51,10 @@ class _MailMixin(object):
         if backend is None:
             klass = MAIL_BACKENDS[mailman.backend]
         elif isinstance(backend, str):
-            klass = MAIL_BACKENDS[backend]
+            try:
+                klass = MAIL_BACKENDS[backend]
+            except KeyError:
+                raise RuntimeError("The available built-in mail backends are: {}".format(', '.join(MAIL_BACKENDS.keys())))
         else:
             klass = backend
 
