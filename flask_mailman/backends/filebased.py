@@ -3,7 +3,7 @@
 import datetime
 import os
 
-from .console import (
+from flask_mailman.backends.console import (
     EmailBackend as ConsoleEmailBackend,
 )
 
