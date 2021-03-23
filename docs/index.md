@@ -1,8 +1,8 @@
 # Welcome to Flask-Mailman
 
-The core part of this extension's source code comes directly from Django's mail module.
+The core part of this extension's source code comes directly from Django's mail module, but with a few interface [differences](#differences-with-django).
 
-And following documentation is also a folk of Django's, but with a few [differences](#differences-with-django).
+And following documentation also draws heavily from Django's.
 
 ## Installation
 
