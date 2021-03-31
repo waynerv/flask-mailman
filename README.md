@@ -1,5 +1,8 @@
 # Flask-Mailman
 
+![PyPI - Downloads](https://img.shields.io/pypi/dm/flask-mailman)
+![PyPI - License](https://img.shields.io/pypi/l/flask-mailman)
+
 Flask-Mailman is a Flask extension providing simple email sending capabilities.
 
 It was meant to replace unmaintained Flask-Mail with a better warranty and more features.

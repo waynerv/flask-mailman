@@ -60,7 +60,7 @@ class _MailMixin(object):
 
         return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 
-    def send_mail(self, subject, message, from_email, recipient_list,
+    def send_mail(self, subject, message, from_email=None, recipient_list=None,
                   fail_silently=False, auth_user=None, auth_password=None,
                   connection=None, html_message=None):
         """
@@ -69,9 +69,6 @@ class _MailMixin(object):
 
         If auth_user is None, use the MAIL_USERNAME setting.
         If auth_password is None, use the MAIL_PASSWORD setting.
-
-        Note: The API for this method is frozen. New code wanting to extend the
-        functionality should use the EmailMessage class directly.
         """
         connection = connection or self.get_connection(
             username=auth_user,

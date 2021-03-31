@@ -1,5 +1,11 @@
 # Release Notes
 
+## 0.2.2
+
+### Changed
+
+- Set `None` as the default value for the `from_email` and `recipient_list` of `send_mail()` function.
+
 ## 0.2.0
 
 A few breaking changes have been made in this version to ensure that API of this extension is basically the same as Django. 
