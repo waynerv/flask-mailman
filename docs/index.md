@@ -396,7 +396,7 @@ The value for each argument is retrieved from the matching configuration if the 
 The SMTP backend is the default configuration inherited by Flask-Mailman. If you want to specify it explicitly, put the following in your configurations:
 
 ```
-EMAIL_BACKEND = 'smtp'
+MAIL_BACKEND = 'smtp'
 ```
 If unspecified, the default timeout will be the one provided by `socket.getdefaulttimeout()`, which defaults to None (no timeout).
 
@@ -407,7 +407,7 @@ Instead of sending out real emails the console backend just writes the emails th
 To specify this backend, put the following in your settings:
 
 ```
-EMAIL_BACKEND = 'console'
+MAIL_BACKEND = 'console'
 ```
 This backend is not intended for use in production – it is provided as a convenience that can be used during development.
 
@@ -418,8 +418,8 @@ The file backend writes emails to a file. A new file is created for each new ses
 To specify this backend, put the following in your configurations:
 
 ```
-EMAIL_BACKEND = 'file'
-EMAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
+MAIL_BACKEND = 'file'
+MAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
 ```
 This backend is not intended for use in production – it is provided as a convenience that can be used during development.
 
@@ -431,7 +431,7 @@ The 'locmem' backend stores messages in a special attribute of the **Mail** inst
 To specify this backend, put the following in your configurations:
 
 ```
-EMAIL_BACKEND = 'locmem'
+MAIL_BACKEND = 'locmem'
 ```
 
 This backend is not intended for use in production – it is provided as a convenience that can be used during development and testing.
@@ -443,7 +443,7 @@ When `TESTING=True` and `MAIL_BACKEND` is not provided, this backend will be use
 As the name suggests the dummy backend does nothing with your messages. To specify this backend, put the following in your configurations:
 
 ```
-EMAIL_BACKEND = 'dummy'
+MAIL_BACKEND = 'dummy'
 ```
 
 This backend is not intended for use in production – it is provided as a convenience that can be used during development.
@@ -462,8 +462,8 @@ The subject, message, from_email and recipient_list parameters are required.
 - **from_email**: A string. If None, Flask-Mailman will use the value of the MAIL_DEFAULT_SENDER configuration.
 - **recipient_list**: A list of strings, each an email address. Each member of `recipient_list` will see the other recipients in the “To:” field of the email message.
 - **fail_silently**: A boolean. When it’s False, `send_mail()` will raise an `smtplib.SMTPException` if an error occurs. See the smtplib docs for a list of possible exceptions, all of which are subclasses of `SMTPException`.
-- **auth_user**: The optional username to use to authenticate to the SMTP server. If this isn’t provided, Flask-Mailman will use the value of the EMAIL_USERNAME configuration.
-- **auth_password**: The optional password to use to authenticate to the SMTP server. If this isn’t provided, Flask-Mailman will use the value of the EMAIL_PASSWORD configuration.
+- **auth_user**: The optional username to use to authenticate to the SMTP server. If this isn’t provided, Flask-Mailman will use the value of the MAIL_USERNAME configuration.
+- **auth_password**: The optional password to use to authenticate to the SMTP server. If this isn’t provided, Flask-Mailman will use the value of the MAIL_PASSWORD configuration.
 - **connection**: The optional email backend to use to send the mail. If unspecified, an instance of the default backend will be used. See the documentation on Email backends for more details.
 - **html_message**: If `html_message` is provided, the resulting email will be a multipart/alternative email with message as the text/plain content type and html_message as the text/html content type.
 
