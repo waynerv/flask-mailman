@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Flask-Mailman"
-version = "0.2.2"
+version = "0.2.3"
 description = "Porting Django's email implementation to your Flask applications."
 authors = ["Waynerv <ampedee@gmail.com>"]
 license = "BSD-3-Clause"
@@ -22,8 +22,8 @@ classifiers=[
     ]
 
 [tool.poetry.dependencies]
-python = "^3.5"
-flask = "^1.0"
+python = "^3.6"
+flask = ">= 1.0"
 
 
 [tool.poetry.dev-dependencies]
