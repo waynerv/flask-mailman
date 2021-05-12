@@ -1,5 +1,15 @@
 # Release Notes
 
+## 0.2.3
+
+### Added
+
+- Add support for Flask 2.0
+
+### Removed
+
+- Drop support for Python 3.5(due to flask upgrade).
+
 ## 0.2.2
 
 ### Changed
