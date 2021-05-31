@@ -1,0 +1,1078 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="img/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.6">
+    
+    
+      
+        <title>Flask-Mailman</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.875de78c.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.f1a3b89f.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="preference" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#welcome-to-flask-mailman" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Flask-Mailman" class="md-header__button md-logo" aria-label="Flask-Mailman" data-md-component="logo">
+      
+  <img src="img/icon-white.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Flask-Mailman
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/waynerv/flask-mailman/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    waynerv/flask-mailman
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Flask-Mailman" class="md-nav__button md-logo" aria-label="Flask-Mailman" data-md-component="logo">
+      
+  <img src="img/icon-white.svg" alt="logo">
+
+    </a>
+    Flask-Mailman
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/waynerv/flask-mailman/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    waynerv/flask-mailman
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Tutorial
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sending-messages" class="md-nav__link">
+    Sending messages
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sending-html-content" class="md-nav__link">
+    Sending html content
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multiple-emails" class="md-nav__link">
+    Sending multiple emails
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attachments" class="md-nav__link">
+    Attachments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preventing-header-injection" class="md-nav__link">
+    Preventing header injection
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sending-alternative-content-types" class="md-nav__link">
+    Sending alternative content types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#email-backends" class="md-nav__link">
+    Email backends
+  </a>
+  
+    <nav class="md-nav" aria-label="Email backends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-an-instance-of-an-email-backend" class="md-nav__link">
+    Obtaining an instance of an email backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smtp-backend" class="md-nav__link">
+    SMTP backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#console-backend" class="md-nav__link">
+    Console backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-backend" class="md-nav__link">
+    File backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-memory-backend" class="md-nav__link">
+    In-memory backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dummy-backend" class="md-nav__link">
+    Dummy backend
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#convenient-functions" class="md-nav__link">
+    Convenient functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Convenient functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send_mail" class="md-nav__link">
+    send_mail()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_mass_mail" class="md-nav__link">
+    send_mass_mail()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_mass_mail-vs-send_mail" class="md-nav__link">
+    send_mass_mail() vs. send_mail()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#differences-with-django" class="md-nav__link">
+    Differences with Django
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="release-notes/" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sending-messages" class="md-nav__link">
+    Sending messages
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sending-html-content" class="md-nav__link">
+    Sending html content
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multiple-emails" class="md-nav__link">
+    Sending multiple emails
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attachments" class="md-nav__link">
+    Attachments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preventing-header-injection" class="md-nav__link">
+    Preventing header injection
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sending-alternative-content-types" class="md-nav__link">
+    Sending alternative content types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#email-backends" class="md-nav__link">
+    Email backends
+  </a>
+  
+    <nav class="md-nav" aria-label="Email backends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-an-instance-of-an-email-backend" class="md-nav__link">
+    Obtaining an instance of an email backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smtp-backend" class="md-nav__link">
+    SMTP backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#console-backend" class="md-nav__link">
+    Console backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-backend" class="md-nav__link">
+    File backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-memory-backend" class="md-nav__link">
+    In-memory backend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dummy-backend" class="md-nav__link">
+    Dummy backend
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#convenient-functions" class="md-nav__link">
+    Convenient functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Convenient functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send_mail" class="md-nav__link">
+    send_mail()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_mass_mail" class="md-nav__link">
+    send_mass_mail()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_mass_mail-vs-send_mail" class="md-nav__link">
+    send_mass_mail() vs. send_mail()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#differences-with-django" class="md-nav__link">
+    Differences with Django
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/waynerv/flask-mailman/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="welcome-to-flask-mailman">Welcome to Flask-Mailman</h1>
+<p>The core part of this extension's source code comes directly from Django's mail module, but with a few interface <a href="#differences-with-django">differences</a>.</p>
+<p>And following documentation also draws heavily from Django's.</p>
+<h2 id="installation">Installation</h2>
+<p>Install with <code>pip</code>:
+<div class="highlight"><pre><span></span><code>pip install Flask-Mailman
+</code></pre></div></p>
+<h2 id="configuration">Configuration</h2>
+<p>Flask-Mailman is configured through the standard Flask config API. A list of configuration keys currently understood by the extension:</p>
+<ul>
+<li>
+<p><strong>MAIL_SERVER</strong>: The host to use for sending email.</p>
+<p>default ‘localhost’.</p>
+</li>
+<li>
+<p><strong>MAIL_PORT</strong>: Port to use for the SMTP server. </p>
+<p>default 25.</p>
+</li>
+<li>
+<p><strong>MAIL_USERNAME</strong>: Username to use for the SMTP server. If empty, Flask-Mailman won’t attempt authentication.</p>
+<p>default None.</p>
+</li>
+<li>
+<p><strong>MAIL_PASSWORD</strong>: Password to use for the SMTP server defined in MAIL_HOST. This setting is used in conjunction with MAIL_USERNAME when authenticating to the SMTP server. If either of these configs is empty, Flask-Mailman won’t attempt authentication. </p>
+<p>default None.</p>
+</li>
+<li>
+<p><strong>MAIL_USE_TLS</strong>: Whether to use a TLS (secure) connection when talking to the SMTP server. This is used for explicit TLS connections, generally on port 587. </p>
+<p>default False.</p>
+</li>
+<li>
+<p><strong>MAIL_USE_SSL</strong>: Whether to use an implicit TLS (secure) connection when talking to the SMTP server. In most email documentation this type of TLS connection is referred to as SSL. It is generally used on port 465. </p>
+<p>default False</p>
+</li>
+<li>
+<p><strong>MAIL_TIMEOUT</strong>: Specifies a timeout in seconds for blocking operations like the connection attempt. </p>
+<p>default None.</p>
+</li>
+<li>
+<p><strong>MAIL_SSL_KEYFILE</strong>: If MAIL_USE_SSL or MAIL_USE_TLS is True, you can optionally specify the path to a PEM-formatted certificate chain file to use for the SSL connection.</p>
+<p>default None.</p>
+</li>
+<li>
+<p><strong>MAIL_SSL_CERTFILE</strong>: If MAIL_USE_SSL or MAIL_USE_TLS is True, you can optionally specify the path to a PEM-formatted private key file to use for the SSL connection.</p>
+<p>Note that setting MAIL_SSL_CERTFILE and MAIL_SSL_KEYFILE doesn’t result in any certificate checking. They’re passed to the underlying SSL connection. Please refer to the documentation of Python’s <code>ssl.wrap_socket()</code> function for details on how the certificate chain file and private key file are handled. </p>
+<p>default None.</p>
+</li>
+<li>
+<p><strong>MAIL_DEFAULT_SENDER</strong>: Default email address to use for various automated correspondence from the site manager(s). </p>
+<p>default None.</p>
+</li>
+<li>
+<p><strong>MAIL_BACKEND</strong>: The backend to use for sending emails.</p>
+<p>Default: 'smtp'. In addition the standard Flask TESTING configuration option is used for testing. When <code>TESTING=True</code> and <code>MAIL_BACKEND</code> is not provided, default will be set to 'locmem'.</p>
+</li>
+<li>
+<p><strong>MAIL_FILE_PATH</strong>: The directory used by the file email backend to store output files.</p>
+<p>Default: Not defined.</p>
+</li>
+<li>
+<p><strong>MAIL_USE_LOCALTIME</strong>: Whether to send the SMTP <strong>Date</strong> header of email messages in the local time zone (True) or in UTC (False).</p>
+<p>Default: False.</p>
+</li>
+</ul>
+<p>Emails are managed through a <em>Mail</em> instance:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</code></pre></div>
+In this case all emails are sent using the configuration values of the application that was passed to the <em>Mail</em> class constructor.</p>
+<p>Alternatively you can set up your <em>Mail</em> instance later at configuration time, using the <code>init_app</code> method:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span>
+
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">()</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</code></pre></div>
+In this case emails will be sent using the configuration values from Flask’s <code>current_app</code> context global. This is useful if you have multiple applications running in the same process but with different configuration options.</p>
+<h2 id="sending-messages">Sending messages</h2>
+<p>To send a message first create a <code>EmailMessage</code> instance:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">EmailMessage</span>
+
+<span class="hll"><span class="n">msg</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+</span><span class="hll">    <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+</span><span class="hll">    <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+</span><span class="hll">    <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+</span><span class="hll">    <span class="p">[</span><span class="s1">&#39;to1@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;to2@example.com&#39;</span><span class="p">],</span>
+</span><span class="hll">    <span class="p">[</span><span class="s1">&#39;bcc@example.com&#39;</span><span class="p">],</span>
+</span><span class="hll">    <span class="n">reply_to</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;another@example.com&#39;</span><span class="p">],</span>
+</span><span class="hll">    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Message-ID&#39;</span><span class="p">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">},</span>
+</span><span class="hll"><span class="p">)</span>
+</span><span class="n">msg</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</code></pre></div>
+Then send the message using <code>send()</code> method:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">EmailMessage</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+    <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;to1@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;to2@example.com&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;bcc@example.com&#39;</span><span class="p">],</span>
+    <span class="n">reply_to</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;another@example.com&#39;</span><span class="p">],</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Message-ID&#39;</span><span class="p">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="hll"><span class="n">msg</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</span></code></pre></div></p>
+<p>The <code>EmailMessage</code> class is initialized with the following parameters (in the given order, if positional arguments are used). 
+All parameters are optional and can be set at any time prior to calling the <code>send()</code> method.</p>
+<ul>
+<li><strong>subject</strong>: The subject line of the email.</li>
+<li><strong>body</strong>: The body text. This should be a plain text message.</li>
+<li><strong>from_email</strong>: The sender’s address. Both <code>fred@example.com</code> or <code>"Fred" &lt;fred@example.com&gt;</code> forms are legal. If omitted, the MAIL_DEFAULT_SENDER config is used.</li>
+<li><strong>to</strong>: A list or tuple of recipient addresses.</li>
+<li><strong>bcc</strong>: A list or tuple of addresses used in the “Bcc” header when sending the email.</li>
+<li><strong>connection</strong>: An email backend instance. Use this parameter if you want to use the same connection for multiple messages. If omitted, a new connection is created when <code>send()</code> is called.</li>
+<li><strong>attachments</strong>: A list of attachments to put on the message. These can be either MIMEBase instances, or (filename, content, mimetype) triples.</li>
+<li><strong>headers</strong>: A dictionary of extra headers to put on the message. The keys are the header name, values are the header values. It’s up to the caller to ensure header names and values are in the correct format for an email message. The corresponding attribute is <code>extra_headers</code>.</li>
+<li><strong>cc</strong>: A list or tuple of recipient addresses used in the “Cc” header when sending the email.</li>
+<li><strong>reply_to</strong>: A list or tuple of recipient addresses used in the “Reply-To” header when sending the email.</li>
+</ul>
+<p><code>EmailMessage.send(fail_silently=False)</code> sends the message. </p>
+<p>If a connection was specified when the email was constructed, that connection will be used. Otherwise, an instance of the default backend will be instantiated and used. </p>
+<p>If the keyword argument <code>fail_silently</code> is True, exceptions raised while sending the message will be quashed. An empty list of recipients will not raise an exception.</p>
+<h3 id="sending-html-content">Sending html content</h3>
+<p>By default, the <strong>MIME</strong> type of the body parameter in an <code>EmailMessage</code> is "text/plain". It is good practice to leave this alone, because it guarantees that any recipient will be able to read the email, regardless of their mail client. However, if you are confident that your recipients can handle an alternative content type, you can use the <code>content_subtype</code> attribute on the <code>EmailMessage</code> class to change the main content type. The major type will always be "text", but you can change the subtype. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">EmailMessage</span>
+
+<span class="n">subject</span><span class="p">,</span> <span class="n">from_email</span><span class="p">,</span> <span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;to@example.com&#39;</span>
+<span class="n">html_content</span> <span class="o">=</span> <span class="s1">&#39;&lt;p&gt;This is an &lt;strong&gt;important&lt;/strong&gt; message.&lt;/p&gt;&#39;</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">html_content</span><span class="p">,</span> <span class="n">from_email</span><span class="p">,</span> <span class="p">[</span><span class="n">to</span><span class="p">])</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">content_subtype</span> <span class="o">=</span> <span class="s2">&quot;html&quot;</span>  <span class="c1"># Main content is now text/html</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="sending-multiple-emails">Sending multiple emails</h3>
+<p>Establishing and closing an SMTP connection (or any other network connection, for that matter) is an expensive process. If you have a lot of emails to send, it makes sense to reuse an SMTP connection, rather than creating and destroying a connection every time you want to send an email.</p>
+<p>There are two ways you tell an email backend to reuse a connection.</p>
+<p>Firstly, you can use the <code>send_messages()</code> method. <code>send_messages()</code> takes a list of <code>EmailMessage</code> instances (or subclasses), and sends them all using a single connection.</p>
+<p>For example, if you have a function called <code>get_notification_email()</code> that returns a list of <code>EmailMessage</code> objects representing some periodic email you wish to send out, you could send these emails using a single call to <code>send_messages</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="n">connection</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>   <span class="c1"># Use default email connection</span>
+<span class="n">messages</span> <span class="o">=</span> <span class="n">get_notification_email</span><span class="p">()</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">send_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+</code></pre></div>
+<p>In this example, the call to <code>send_messages()</code> opens a connection on the backend, sends the list of messages, and then closes the connection again.</p>
+<p>The second approach is to use the <code>open()</code> and <code>close()</code> methods on the email backend to manually control the connection. <code>send_messages()</code> will not manually open or close the connection if it is already open, so if you manually open the connection, you can control when it is closed. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span><span class="p">,</span> <span class="n">EmailMessage</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="n">connection</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
+
+<span class="c1"># Manually open the connection</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="c1"># Construct an email message that uses the connection</span>
+<span class="n">email1</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+    <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;to1@example.com&#39;</span><span class="p">],</span>
+    <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">email1</span><span class="o">.</span><span class="n">send</span><span class="p">()</span> <span class="c1"># Send the email</span>
+
+<span class="c1"># Construct two more messages</span>
+<span class="n">email2</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+    <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;to2@example.com&#39;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">email3</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+    <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;to3@example.com&#39;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Send the two emails in a single call -</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">send_messages</span><span class="p">([</span><span class="n">email2</span><span class="p">,</span> <span class="n">email3</span><span class="p">])</span>
+<span class="c1"># The connection was already open so send_messages() doesn&#39;t close it.</span>
+<span class="c1"># We need to manually close the connection.</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p>Of course there is always a short writing using <code>with</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span><span class="p">,</span> <span class="n">EmailMessage</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">email1</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+    <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;to1@example.com&#39;</span><span class="p">],</span>
+    <span class="n">connection</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">email1</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+
+    <span class="n">email2</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+        <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+        <span class="p">[</span><span class="s1">&#39;to2@example.com&#39;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">email3</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+        <span class="s1">&#39;Hello&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Body goes here&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span>
+        <span class="p">[</span><span class="s1">&#39;to3@example.com&#39;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send_messages</span><span class="p">([</span><span class="n">email2</span><span class="p">,</span> <span class="n">email3</span><span class="p">])</span>
+</code></pre></div>
+<h2 id="attachments">Attachments</h2>
+<p>You can use the following two methods to adding attachments:</p>
+<ul>
+<li>
+<p><code>EmailMessage.attach()</code> creates a new file attachment and adds it to the message. There are two ways to call <code>attach()</code>:</p>
+<ul>
+<li>
+<p>You can pass it a single argument that is a <strong>MIMEBase</strong> instance. This will be inserted directly into the resulting message.</p>
+</li>
+<li>
+<p>Alternatively, you can pass <code>attach()</code> three arguments: <strong>filename</strong>, <strong>content</strong> and <strong>mimetype</strong>. filename is the name of the file attachment as it will appear in the email, content is the data that will be contained inside the attachment and mimetype is the optional MIME type for the attachment. If you omit mimetype, the MIME content type will be guessed from the filename of the attachment.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>message.attach(&#39;design.png&#39;, img_data, &#39;image/png&#39;)
+</code></pre></div>
+<p>If you specify a mimetype of message/rfc822, it will also accept <code>flask_mailman.EmailMessage</code> and <code>email.message.Message</code>.</p>
+<p>For a mimetype starting with text/, content is expected to be a string. Binary data will be decoded using UTF-8, and if that fails, the MIME type will be changed to application/octet-stream and the data will be attached unchanged.</p>
+<p>In addition, message/rfc822 attachments will no longer be base64-encoded in violation of RFC 2046#section-5.2.1, which can cause issues with displaying the attachments in Evolution and Thunderbird.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>EmailMessage.attach_file()</code> creates a new attachment using a file from your filesystem. Call it with the path of the file to attach and, optionally, the <strong>MIME</strong> type to use for the attachment. If the <strong>MIME</strong> type is omitted, it will be guessed from the filename. You can use it like this:</p>
+<div class="highlight"><pre><span></span><code>message.attach_file(&#39;/images/weather_map.png&#39;)
+</code></pre></div>
+<p>For <strong>MIME</strong> types starting with text/, binary data is handled as in <code>attach()</code>.</p>
+</li>
+</ul>
+<h2 id="preventing-header-injection">Preventing header injection</h2>
+<p>Header injection is a security exploit in which an attacker inserts extra email headers to control the “To:” and “From:” in email messages that your scripts generate.</p>
+<p>The Flask-Mailman email methods outlined above all protect against header injection by forbidding newlines in header values. If any <code>subject</code>, <code>from_email</code> or <code>recipient_list</code> contains a newline (in either Unix, Windows or Mac style), the email method (e.g. <code>send_mail()</code>) will raise <code>flask_mailman.BadHeaderError</code> (a subclass of <code>ValueError</code>) and, hence, will not send the email. It’s your responsibility to validate all data before passing it to the email functions.</p>
+<p>If a message contains headers at the start of the string, the headers will be printed as the first bit of the email message.</p>
+<h2 id="sending-alternative-content-types">Sending alternative content types</h2>
+<p>It can be useful to include multiple versions of the content in an email; the classic example is to send both text and HTML versions of a message. With this library, you can do this using the <code>EmailMultiAlternatives</code> class. This subclass of <code>EmailMessage</code> has an <code>attach_alternative()</code> method for including extra versions of the message body in the email. All the other methods (including the class initialization) are inherited directly from <code>EmailMessage</code>.</p>
+<p>To send a text and HTML combination, you could write:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">EmailMultiAlternatives</span>
+
+<span class="n">subject</span><span class="p">,</span> <span class="n">from_email</span><span class="p">,</span> <span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;to@example.com&#39;</span>
+<span class="n">text_content</span> <span class="o">=</span> <span class="s1">&#39;This is an important message.&#39;</span>
+<span class="n">html_content</span> <span class="o">=</span> <span class="s1">&#39;&lt;p&gt;This is an &lt;strong&gt;important&lt;/strong&gt; message.&lt;/p&gt;&#39;</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">EmailMultiAlternatives</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">text_content</span><span class="p">,</span> <span class="n">from_email</span><span class="p">,</span> <span class="p">[</span><span class="n">to</span><span class="p">])</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach_alternative</span><span class="p">(</span><span class="n">html_content</span><span class="p">,</span> <span class="s2">&quot;text/html&quot;</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="email-backends">Email backends</h2>
+<p>The actual sending of an email is handled by the email backend.</p>
+<p>The email backend class has the following methods:</p>
+<ul>
+<li><code>open()</code> instantiates a long-lived email-sending connection.</li>
+<li><code>close()</code> closes the current email-sending connection.</li>
+</ul>
+<p><code>send_messages(email_messages)</code> sends a list of <code>EmailMessage</code> objects. If the connection is not open, this call will implicitly open the connection, and close the connection afterwards. If the connection is already open, it will be left open after mail has been sent.
+It can also be used as a context manager, which will automatically call <code>open()</code> and <code>close()</code> as needed:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">EmailMessage</span><span class="p">(</span>
+        <span class="n">subject1</span><span class="p">,</span> <span class="n">body1</span><span class="p">,</span> <span class="n">from1</span><span class="p">,</span> <span class="p">[</span><span class="n">to1</span><span class="p">],</span>
+        <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">EmailMessage</span><span class="p">(</span>
+        <span class="n">subject2</span><span class="p">,</span> <span class="n">body2</span><span class="p">,</span> <span class="n">from2</span><span class="p">,</span> <span class="p">[</span><span class="n">to2</span><span class="p">],</span>
+        <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="obtaining-an-instance-of-an-email-backend">Obtaining an instance of an email backend</h3>
+<p>The <code>get_connection()</code> method of <strong>Mail</strong> instance returns an instance of the email backend that you can use.</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">Mail</span><span class="o">.</span><span class="n">get_connection</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fail_silently</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+By default, a call to <code>get_connection()</code> will return an instance of the email backend specified in MAIL_BACKEND configuration. If you specify the backend argument, an instance of that backend will be instantiated.</p>
+<p>The <code>fail_silently</code> argument controls how the backend should handle errors. If <code>fail_silently</code> is True, exceptions during the email sending process will be silently ignored.</p>
+<p>All other arguments are passed directly to the constructor of the email backend.</p>
+<p>Flask-Mailman ships with several email sending backends. With the exception of the SMTP backend (which is the default), these backends are only useful during testing and development. If you have special email sending requirements, you can write your own email backend.</p>
+<h3 id="smtp-backend">SMTP backend</h3>
+<p><div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">backends</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">EmailBackend</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">use_tls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fail_silently</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">use_ssl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ssl_keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ssl_certfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span>
+</code></pre></div>
+This is the default backend. Email will be sent through a SMTP server.</p>
+<p>The value for each argument is retrieved from the matching configuration if the argument is None:</p>
+<ul>
+<li>host: MAIL_HOST</li>
+<li>port: MAIL_PORT</li>
+<li>username: MAIL_USERNAME</li>
+<li>password: MAIL_PASSWORD</li>
+<li>use_tls: MAIL_USE_TLS</li>
+<li>use_ssl: MAIL_USE_SSL</li>
+<li>timeout: MAIL_TIMEOUT</li>
+<li>ssl_keyfile: MAIL_SSL_KEYFILE</li>
+<li>ssl_certfile: MAIL_SSL_CERTFILE</li>
+</ul>
+<p>The SMTP backend is the default configuration inherited by Flask-Mailman. If you want to specify it explicitly, put the following in your configurations:</p>
+<p><div class="highlight"><pre><span></span><code>MAIL_BACKEND = &#39;smtp&#39;
+</code></pre></div>
+If unspecified, the default timeout will be the one provided by <code>socket.getdefaulttimeout()</code>, which defaults to None (no timeout).</p>
+<h3 id="console-backend">Console backend</h3>
+<p>Instead of sending out real emails the console backend just writes the emails that would be sent to the standard output. By default, the console backend writes to stdout. You can use a different stream-like object by providing the stream keyword argument when constructing the connection.</p>
+<p>To specify this backend, put the following in your settings:</p>
+<p><div class="highlight"><pre><span></span><code>MAIL_BACKEND = &#39;console&#39;
+</code></pre></div>
+This backend is not intended for use in production – it is provided as a convenience that can be used during development.</p>
+<h3 id="file-backend">File backend</h3>
+<p>The file backend writes emails to a file. A new file is created for each new session that is opened on this backend. The directory to which the files are written is either taken from the MAIL_FILE_PATH configuration or from the <code>file_path</code> keyword when creating a connection with <code>Mail.get_connection()</code>.</p>
+<p>To specify this backend, put the following in your configurations:</p>
+<p><div class="highlight"><pre><span></span><code>MAIL_BACKEND = &#39;file&#39;
+MAIL_FILE_PATH = &#39;/tmp/app-messages&#39; # change this to a proper location
+</code></pre></div>
+This backend is not intended for use in production – it is provided as a convenience that can be used during development.</p>
+<p>Support for <code>pathlib.Path</code> was added.</p>
+<h3 id="in-memory-backend">In-memory backend</h3>
+<p>The 'locmem' backend stores messages in a special attribute of the <strong>Mail</strong> instance. The <code>outbox</code> attribute is created when the first message is sent. It’s a list with an <code>EmailMessage</code> instance for each message that would be sent.</p>
+<p>To specify this backend, put the following in your configurations:</p>
+<div class="highlight"><pre><span></span><code>MAIL_BACKEND = &#39;locmem&#39;
+</code></pre></div>
+<p>This backend is not intended for use in production – it is provided as a convenience that can be used during development and testing.</p>
+<p>When <code>TESTING=True</code> and <code>MAIL_BACKEND</code> is not provided, this backend will be used for testing.</p>
+<h3 id="dummy-backend">Dummy backend</h3>
+<p>As the name suggests the dummy backend does nothing with your messages. To specify this backend, put the following in your configurations:</p>
+<div class="highlight"><pre><span></span><code>MAIL_BACKEND = &#39;dummy&#39;
+</code></pre></div>
+<p>This backend is not intended for use in production – it is provided as a convenience that can be used during development.</p>
+<h2 id="convenient-functions">Convenient functions</h2>
+<h3 id="send_mail">send_mail()</h3>
+<p><em>send_mail(subject, message, from_email, recipient_list, fail_silently=False, auth_user=None, auth_password=None, connection=None, html_message=None)</em></p>
+<p>In most cases, you can send email using <code>Mail.send_mail()</code>.</p>
+<p>The subject, message, from_email and recipient_list parameters are required.</p>
+<ul>
+<li><strong>subject</strong>: A string.</li>
+<li><strong>message</strong>: A string.</li>
+<li><strong>from_email</strong>: A string. If None, Flask-Mailman will use the value of the MAIL_DEFAULT_SENDER configuration.</li>
+<li><strong>recipient_list</strong>: A list of strings, each an email address. Each member of <code>recipient_list</code> will see the other recipients in the “To:” field of the email message.</li>
+<li><strong>fail_silently</strong>: A boolean. When it’s False, <code>send_mail()</code> will raise an <code>smtplib.SMTPException</code> if an error occurs. See the smtplib docs for a list of possible exceptions, all of which are subclasses of <code>SMTPException</code>.</li>
+<li><strong>auth_user</strong>: The optional username to use to authenticate to the SMTP server. If this isn’t provided, Flask-Mailman will use the value of the MAIL_USERNAME configuration.</li>
+<li><strong>auth_password</strong>: The optional password to use to authenticate to the SMTP server. If this isn’t provided, Flask-Mailman will use the value of the MAIL_PASSWORD configuration.</li>
+<li><strong>connection</strong>: The optional email backend to use to send the mail. If unspecified, an instance of the default backend will be used. See the documentation on Email backends for more details.</li>
+<li><strong>html_message</strong>: If <code>html_message</code> is provided, the resulting email will be a multipart/alternative email with message as the text/plain content type and html_message as the text/html content type.</li>
+</ul>
+<p>The return value will be the number of successfully delivered messages (which can be 0 or 1 since it can only send one message).</p>
+<h3 id="send_mass_mail">send_mass_mail()</h3>
+<p><em>send_mass_mail(datatuple, fail_silently=False, auth_user=None, auth_password=None, connection=None)</em></p>
+<p><code>Mail.send_mass_mail()</code> is intended to handle mass emailing.</p>
+<p>datatuple is a tuple in which each element is in this format:</p>
+<p><div class="highlight"><pre><span></span><code>(subject, message, from_email, recipient_list)
+</code></pre></div>
+<code>fail_silently</code>, <code>auth_user</code> and <code>auth_password</code> have the same functions as in <code>send_mail()</code>.</p>
+<p>Each separate element of datatuple results in a separate email message. As in <code>send_mail()</code>, recipients in the same <code>recipient_list</code> will all see the other addresses in the email messages’ “To:” field.</p>
+<p>For example, the following code would send two different messages to two different sets of recipients; however, only one connection to the mail server would be opened:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_mailman</span> <span class="kn">import</span> <span class="n">Mail</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="n">message1</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Subject here&#39;</span><span class="p">,</span> <span class="s1">&#39;Here is the message&#39;</span><span class="p">,</span> <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;first@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;other@example.com&#39;</span><span class="p">])</span>
+<span class="n">message2</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Another Subject&#39;</span><span class="p">,</span> <span class="s1">&#39;Here is another message&#39;</span><span class="p">,</span> <span class="s1">&#39;from@example.com&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;second@test.com&#39;</span><span class="p">])</span>
+<span class="n">mail</span><span class="o">.</span><span class="n">send_mass_mail</span><span class="p">((</span><span class="n">message1</span><span class="p">,</span> <span class="n">message2</span><span class="p">),</span> <span class="n">fail_silently</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># The return value will be the number of successfully delivered messages.</span>
+</code></pre></div>
+<h3 id="send_mass_mail-vs-send_mail">send_mass_mail() vs. send_mail()</h3>
+<p>The main difference between <code>send_mass_mail()</code> and <code>send_mail()</code> is that <code>send_mail()</code> opens a connection to the mail server each time it’s executed, while <code>send_mass_mail()</code> uses a single connection for all of its messages. This makes <code>send_mass_mail()</code> slightly more efficient.</p>
+<h2 id="differences-with-django">Differences with Django</h2>
+<p>The name of configuration keys is different here, but you can easily resolve it.</p>
+<p><code>mail_admins()</code> and <code>mail_managers()</code> methods were removed, you can write an alternative one in a minute if you need.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+      
+        <a href="release-notes/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Release Notes
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.34eae1b6.min.js"></script>
+      
+    
+  </body>
+</html>
