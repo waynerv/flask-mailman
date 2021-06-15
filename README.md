@@ -2,7 +2,9 @@
 
 ![PyPI](https://img.shields.io/pypi/v/flask-mailman?color=blue)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/flask-mailman?color=brightgreen)
-![PyPI - License](https://img.shields.io/pypi/l/flask-mailman)
+[![dev workflow](https://github.com/waynerv/flask-mailman/actions/workflows/dev.yml/badge.svg?branch=master)](https://github.com/waynerv/flask-mailman/actions/workflows/dev.yml)
+![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/waynerv/flask-mailman/latest?color=cyan)
+![PyPI - License](https://img.shields.io/pypi/l/flask-mailman?color=blue)
 
 Flask-Mailman is a Flask extension providing simple email sending capabilities.
 
