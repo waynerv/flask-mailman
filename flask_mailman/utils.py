@@ -31,7 +31,13 @@ class FlaskUnicodeDecodeError(UnicodeDecodeError):
 
 
 _PROTECTED_TYPES = (
-    type(None), int, float, Decimal, datetime.datetime, datetime.date, datetime.time,
+    type(None),
+    int,
+    float,
+    Decimal,
+    datetime.datetime,
+    datetime.date,
+    datetime.time,
 )
 
 

@@ -13,10 +13,20 @@ class EmailBackend(BaseEmailBackend):
     A wrapper that manages the SMTP network connection.
     """
 
-    def __init__(self, host=None, port=None, username=None, password=None,
-                 use_tls=None, fail_silently=False, use_ssl=None, timeout=None,
-                 ssl_keyfile=None, ssl_certfile=None,
-                 **kwargs):
+    def __init__(
+        self,
+        host=None,
+        port=None,
+        username=None,
+        password=None,
+        use_tls=None,
+        fail_silently=False,
+        use_ssl=None,
+        timeout=None,
+        ssl_keyfile=None,
+        ssl_certfile=None,
+        **kwargs,
+    ):
         super().__init__(fail_silently=fail_silently, **kwargs)
         self.host = host or self.mailman.server
         self.port = port or self.mailman.port
@@ -29,8 +39,8 @@ class EmailBackend(BaseEmailBackend):
         self.ssl_certfile = self.mailman.ssl_certfile if ssl_certfile is None else ssl_certfile
         if self.use_ssl and self.use_tls:
             raise ValueError(
-                "EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive, so only set "
-                "one of those settings to True.")
+                "EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive, so only set " "one of those settings to True."
+            )
         self.connection = None
         self._lock = threading.RLock()
 
@@ -54,10 +64,12 @@ class EmailBackend(BaseEmailBackend):
         if self.timeout is not None:
             connection_params['timeout'] = self.timeout
         if self.use_ssl:
-            connection_params.update({
-                'keyfile': self.ssl_keyfile,
-                'certfile': self.ssl_certfile,
-            })
+            connection_params.update(
+                {
+                    'keyfile': self.ssl_keyfile,
+                    'certfile': self.ssl_certfile,
+                }
+            )
         try:
             self.connection = self.connection_class(self.host, self.port, **connection_params)
 

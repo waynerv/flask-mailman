@@ -1,4 +1,11 @@
 site_name: Flask-Mailman
+site_url: https://waynerv.github.io/flask-mailman
+repo_url: https://github.com/waynerv/flask-mailman
+repo_name: waynerv/flask-mailman
+nav:
+  - Tutorial: index.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
 theme:
   name: material
   palette:
@@ -10,14 +17,16 @@ theme:
   logo: img/icon-white.svg
   favicon: img/favicon.png
   language: en
-repo_name: waynerv/flask-mailman
-repo_url: https://github.com/waynerv/flask-mailman
-nav:
-  - Tutorial: index.md
-  - release-notes.md
 markdown_extensions:
   - pymdownx.highlight:
       linenums: false
       linenums_style: pymdownx.inline
   - pymdownx.superfences
   - pymdownx.inlinehilite
+plugins:
+  - include-markdown
+  - search:
+      lang: en
+  - mkdocstrings:
+      watch:
+        - flask-mailman

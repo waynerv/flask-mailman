@@ -3,13 +3,12 @@
 import datetime
 import os
 
-from flask_mailman.backends.console import (
-    EmailBackend as ConsoleEmailBackend,
-)
+from flask_mailman.backends.console import EmailBackend as ConsoleEmailBackend
 
 
 class ImproperlyConfigured(Exception):
     """Application is somehow improperly configured"""
+
     pass
 
 

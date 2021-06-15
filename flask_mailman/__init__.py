@@ -8,18 +8,30 @@ from flask_mailman.backends.dummy import EmailBackend as DummyEmailBackend
 from flask_mailman.backends.filebased import EmailBackend as FileEmailBackend
 from flask_mailman.backends.locmem import EmailBackend as MemoryEmailBackend
 from flask_mailman.backends.smtp import EmailBackend as SMTPEmailBackend
-
-from .message import (
-    DEFAULT_ATTACHMENT_MIME_TYPE, BadHeaderError, EmailMessage,
-    EmailMultiAlternatives, SafeMIMEMultipart, SafeMIMEText,
-    forbid_multi_line_headers, make_msgid,
-)
 from flask_mailman.utils import DNS_NAME, CachedDnsName
 
+from .message import (
+    DEFAULT_ATTACHMENT_MIME_TYPE,
+    BadHeaderError,
+    EmailMessage,
+    EmailMultiAlternatives,
+    SafeMIMEMultipart,
+    SafeMIMEText,
+    forbid_multi_line_headers,
+    make_msgid,
+)
+
 __all__ = [
-    'CachedDnsName', 'DNS_NAME', 'EmailMessage', 'EmailMultiAlternatives',
-    'SafeMIMEText', 'SafeMIMEMultipart', 'DEFAULT_ATTACHMENT_MIME_TYPE',
-    'make_msgid', 'BadHeaderError', 'forbid_multi_line_headers',
+    'CachedDnsName',
+    'DNS_NAME',
+    'EmailMessage',
+    'EmailMultiAlternatives',
+    'SafeMIMEText',
+    'SafeMIMEMultipart',
+    'DEFAULT_ATTACHMENT_MIME_TYPE',
+    'make_msgid',
+    'BadHeaderError',
+    'forbid_multi_line_headers',
     'Mail',
 ]
 
@@ -28,12 +40,11 @@ MAIL_BACKENDS = {
     'dummy': DummyEmailBackend,
     'file': FileEmailBackend,
     'locmem': MemoryEmailBackend,
-    'smtp': SMTPEmailBackend
+    'smtp': SMTPEmailBackend,
 }
 
 
 class _MailMixin(object):
-
     def get_connection(self, backend=None, fail_silently=False, **kwds):
         """Load an email backend and return an instance of it.
 
@@ -60,9 +71,18 @@ class _MailMixin(object):
 
         return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 
-    def send_mail(self, subject, message, from_email=None, recipient_list=None,
-                  fail_silently=False, auth_user=None, auth_password=None,
-                  connection=None, html_message=None):
+    def send_mail(
+        self,
+        subject,
+        message,
+        from_email=None,
+        recipient_list=None,
+        fail_silently=False,
+        auth_user=None,
+        auth_password=None,
+        connection=None,
+        html_message=None,
+    ):
         """
         Easy wrapper for sending a single message to a recipient list. All members
         of the recipient list will see the other recipients in the 'To' field.
@@ -81,8 +101,7 @@ class _MailMixin(object):
 
         return mail.send()
 
-    def send_mass_mail(self, datatuple, fail_silently=False, auth_user=None,
-                       auth_password=None, connection=None):
+    def send_mass_mail(self, datatuple, fail_silently=False, auth_user=None, auth_password=None, connection=None):
         """
         Given a datatuple of (subject, message, from_email, recipient_list), send
         each message to each recipient list. Return the number of emails sent.
@@ -110,8 +129,23 @@ class _MailMixin(object):
 class _Mail(_MailMixin):
     """Initialize a state instance with all configs and methods"""
 
-    def __init__(self, server, port, username, password, use_tls, use_ssl, default_sender, timeout, ssl_keyfile,
-                 ssl_certfile, use_localtime, file_path, default_charset, backend):
+    def __init__(
+        self,
+        server,
+        port,
+        username,
+        password,
+        use_tls,
+        use_ssl,
+        default_sender,
+        timeout,
+        ssl_keyfile,
+        ssl_certfile,
+        use_localtime,
+        file_path,
+        default_charset,
+        backend,
+    ):
         self.server = server
         self.port = port
         self.username = username
