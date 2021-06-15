@@ -15,6 +15,7 @@ class BaseEmailBackend:
            # do something with connection
            pass
     """
+
     def __init__(self, mailman=None, fail_silently=False, **kwargs):
         self.fail_silently = fail_silently
         try:

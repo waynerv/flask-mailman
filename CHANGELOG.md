@@ -1,4 +1,4 @@
-# Release Notes
+# Changelog
 
 ## 0.2.3
 
@@ -18,7 +18,7 @@
 
 ## 0.2.0
 
-A few breaking changes have been made in this version to ensure that API of this extension is basically the same as Django. 
+A few breaking changes have been made in this version to ensure that API of this extension is basically the same as Django.
 Users migrating from Flask-Mail should upgrade with caution.
 
 ### Added

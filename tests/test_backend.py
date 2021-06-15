@@ -5,8 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from flask_mailman import EmailMessage
-from flask_mailman.backends import smtp
-from flask_mailman.backends import locmem
+from flask_mailman.backends import locmem, smtp
 from tests import TestCase
 
 
@@ -64,9 +63,7 @@ class TestBackend(TestCase):
         self.assertEqual(sent_msg.subject, "testing")
         self.assertEqual(sent_msg.to, ["to@example.com"])
         self.assertEqual(sent_msg.body, "testing")
-        self.assertEqual(
-            sent_msg.from_email, self.app.extensions["mailman"].default_sender
-        )
+        self.assertEqual(sent_msg.from_email, self.app.extensions["mailman"].default_sender)
 
     def test_smtp_backend(self):
         self.app.extensions['mailman'].backend = 'smtp'
@@ -95,12 +92,7 @@ class TestBackend(TestCase):
     def test_override_custom_backend(self):
         self.app.extensions['mailman'].backend = 'console'
         with self.mail.get_connection(backend=locmem.EmailBackend) as conn:
-            msg = EmailMessage(
-                subject="testing",
-                to=["to@example.com"],
-                body="testing",
-                connection=conn
-            )
+            msg = EmailMessage(subject="testing", to=["to@example.com"], body="testing", connection=conn)
             msg.send()
 
         self.assertEqual(len(self.mail.outbox), 1)
