@@ -2,12 +2,9 @@
 Tools for sending email.
 """
 from flask import current_app
+from importlib import import_module
+import typing as t
 
-from flask_mailman.backends.console import EmailBackend as ConsoleEmailBackend
-from flask_mailman.backends.dummy import EmailBackend as DummyEmailBackend
-from flask_mailman.backends.filebased import EmailBackend as FileEmailBackend
-from flask_mailman.backends.locmem import EmailBackend as MemoryEmailBackend
-from flask_mailman.backends.smtp import EmailBackend as SMTPEmailBackend
 from flask_mailman.utils import DNS_NAME, CachedDnsName
 
 from .message import (
@@ -20,6 +17,9 @@ from .message import (
     forbid_multi_line_headers,
     make_msgid,
 )
+
+if t.TYPE_CHECKING:
+    from .backends.base import BaseEmailBackend
 
 __all__ = [
     'CachedDnsName',
@@ -35,16 +35,75 @@ __all__ = [
     'Mail',
 ]
 
-MAIL_BACKENDS = {
-    'console': ConsoleEmailBackend,
-    'dummy': DummyEmailBackend,
-    'file': FileEmailBackend,
-    'locmem': MemoryEmailBackend,
-    'smtp': SMTPEmailBackend,
-}
+
+available_backends = ['console', 'dummy', 'file', 'smtp', 'locmem']
 
 
 class _MailMixin(object):
+
+    def _get_backend_from_module(
+                        self, 
+                        backend_module_name:str, 
+                        backend_class_name:str
+                        ) -> "BaseEmailBackend":
+        """
+        import the backend module and return the backend class.
+
+        :param backend_module_name:
+            the string based module name from where the backend class will be imported.
+        
+        :param backend_class_name:
+            the string based backend class name.
+        """
+        backend_module:t.ModuleType = import_module(backend_module_name)
+        backend:"BaseEmailBackend" = getattr(backend_module, backend_class_name)
+        return backend
+
+    def import_backend(self, backend_name:t.Any) -> "BaseEmailBackend":
+        """
+        This is the base method to import the backend service.
+        This method will implement the feature for flask_mailman to take custom backends.
+
+        Now you can create your own backend class and implement with flask mailman.
+
+        :for example::
+
+            from flask import Flask
+
+            app = Flask(__name__)
+            app.config['MAIL_BACKEND'] = 'locmem'
+            #or
+            app.config['MAIL_BACKEND'] = 'smtp'
+            #or
+            app.config['MAIL_BACKEND'] = 'flask_mailman.backends.locmem'
+            #or
+            app.config['MAIL_BACKEND'] = 'flask_mailman.backends.locmem.EmailBackend'
+            #or
+            app.config['MAIL_BACKEND'] = 'your_project.mail.backends.custom.EmailBackend'
+        """
+        backend:t.Optional["BaseEmailBackend"] = None
+
+        if not isinstance(backend_name, str):
+            backend = backend_name
+
+        else:
+            default_backend_loc:str = "flask_mailman.backends"
+            default_backend_class:str = "EmailBackend"
+
+            if "." not in backend_name:
+                backend_module_name:str = default_backend_loc+"."+backend_name
+                backend:"BaseEmailBackend" = self._get_backend_from_module(backend_module_name, default_backend_class)
+
+            else:
+                if backend_name.endswith(default_backend_class):
+                    backend_module_name, backend_class_name = backend_name.rsplit('.', 1)
+                    backend:"BaseEmailBackend" = self._get_backend_from_module(backend_module_name, backend_class_name)
+
+                else:
+                    backend:"BaseEmailBackend" = self._get_backend_from_module(backend_name, default_backend_class)
+            
+        return backend
+
     def get_connection(self, backend=None, fail_silently=False, **kwds):
         """Load an email backend and return an instance of it.
 
@@ -61,13 +120,13 @@ class _MailMixin(object):
 
         try:
             if backend is None:
-                klass = MAIL_BACKENDS[mailman.backend]
-            elif isinstance(backend, str):
-                klass = MAIL_BACKENDS[backend]
-            else:
-                klass = backend
-        except KeyError:
-            raise RuntimeError("The available built-in mail backends are: {}".format(', '.join(MAIL_BACKENDS.keys())))
+                backend = mailman.backend
+            
+            klass = self.import_backend(backend)
+
+        except ImportError:
+            err_msg = f"Unable to import backend: {backend}. The available built-in mail backends are: {', '.join(available_backends)}"
+            raise RuntimeError(err_msg)
 
         return klass(mailman=mailman, fail_silently=fail_silently, **kwds)
 
@@ -179,7 +238,7 @@ class Mail(_MailMixin):
     def init_mail(config, testing=False):
         # Set default mail backend in different environment
         mail_backend = config.get('MAIL_BACKEND')
-        if mail_backend is None or mail_backend not in MAIL_BACKENDS.keys():
+        if mail_backend is None or mail_backend == str():
             mail_backend = 'locmem' if testing else 'smtp'
 
         return _Mail(
