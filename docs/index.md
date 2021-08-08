@@ -16,45 +16,45 @@ pip install Flask-Mailman
 Flask-Mailman is configured through the standard Flask config API. A list of configuration keys currently understood by the extension:
 
 - **MAIL_SERVER**: The host to use for sending email.
-    
+
     default ‘localhost’.
 
-- **MAIL_PORT**: Port to use for the SMTP server. 
-    
+- **MAIL_PORT**: Port to use for the SMTP server.
+
     default 25.
 
 - **MAIL_USERNAME**: Username to use for the SMTP server. If empty, Flask-Mailman won’t attempt authentication.
-    
+
     default None.
-    
-- **MAIL_PASSWORD**: Password to use for the SMTP server defined in MAIL_HOST. This setting is used in conjunction with MAIL_USERNAME when authenticating to the SMTP server. If either of these configs is empty, Flask-Mailman won’t attempt authentication. 
-    
+
+- **MAIL_PASSWORD**: Password to use for the SMTP server defined in MAIL_HOST. This setting is used in conjunction with MAIL_USERNAME when authenticating to the SMTP server. If either of these configs is empty, Flask-Mailman won’t attempt authentication.
+
     default None.
-    
-- **MAIL_USE_TLS**: Whether to use a TLS (secure) connection when talking to the SMTP server. This is used for explicit TLS connections, generally on port 587. 
-    
+
+- **MAIL_USE_TLS**: Whether to use a TLS (secure) connection when talking to the SMTP server. This is used for explicit TLS connections, generally on port 587.
+
     default False.
-    
-- **MAIL_USE_SSL**: Whether to use an implicit TLS (secure) connection when talking to the SMTP server. In most email documentation this type of TLS connection is referred to as SSL. It is generally used on port 465. 
-    
+
+- **MAIL_USE_SSL**: Whether to use an implicit TLS (secure) connection when talking to the SMTP server. In most email documentation this type of TLS connection is referred to as SSL. It is generally used on port 465.
+
     default False
 
-- **MAIL_TIMEOUT**: Specifies a timeout in seconds for blocking operations like the connection attempt. 
-    
-    default None.
-    
-- **MAIL_SSL_KEYFILE**: If MAIL_USE_SSL or MAIL_USE_TLS is True, you can optionally specify the path to a PEM-formatted certificate chain file to use for the SSL connection.
-    
-    default None.
-    
-- **MAIL_SSL_CERTFILE**: If MAIL_USE_SSL or MAIL_USE_TLS is True, you can optionally specify the path to a PEM-formatted private key file to use for the SSL connection.
-    
-    Note that setting MAIL_SSL_CERTFILE and MAIL_SSL_KEYFILE doesn’t result in any certificate checking. They’re passed to the underlying SSL connection. Please refer to the documentation of Python’s `ssl.wrap_socket()` function for details on how the certificate chain file and private key file are handled. 
-    
+- **MAIL_TIMEOUT**: Specifies a timeout in seconds for blocking operations like the connection attempt.
+
     default None.
 
-- **MAIL_DEFAULT_SENDER**: Default email address to use for various automated correspondence from the site manager(s). 
-    
+- **MAIL_SSL_KEYFILE**: If MAIL_USE_SSL or MAIL_USE_TLS is True, you can optionally specify the path to a PEM-formatted certificate chain file to use for the SSL connection.
+
+    default None.
+
+- **MAIL_SSL_CERTFILE**: If MAIL_USE_SSL or MAIL_USE_TLS is True, you can optionally specify the path to a PEM-formatted private key file to use for the SSL connection.
+
+    Note that setting MAIL_SSL_CERTFILE and MAIL_SSL_KEYFILE doesn’t result in any certificate checking. They’re passed to the underlying SSL connection. Please refer to the documentation of Python’s `ssl.wrap_socket()` function for details on how the certificate chain file and private key file are handled.
+
+    default None.
+
+- **MAIL_DEFAULT_SENDER**: Default email address to use for various automated correspondence from the site manager(s).
+
     default None.
 
 - **MAIL_BACKEND**: The backend to use for sending emails.
@@ -68,7 +68,7 @@ Flask-Mailman is configured through the standard Flask config API. A list of con
 - **MAIL_USE_LOCALTIME**: Whether to send the SMTP **Date** header of email messages in the local time zone (True) or in UTC (False).
 
     Default: False.
-    
+
 Emails are managed through a *Mail* instance:
 ```python
 from flask import Flask
@@ -124,7 +124,7 @@ msg = EmailMessage(
 msg.send()
 ```
 
-The `EmailMessage` class is initialized with the following parameters (in the given order, if positional arguments are used). 
+The `EmailMessage` class is initialized with the following parameters (in the given order, if positional arguments are used).
 All parameters are optional and can be set at any time prior to calling the `send()` method.
 
 - **subject**: The subject line of the email.
@@ -138,9 +138,9 @@ All parameters are optional and can be set at any time prior to calling the `sen
 - **cc**: A list or tuple of recipient addresses used in the “Cc” header when sending the email.
 - **reply_to**: A list or tuple of recipient addresses used in the “Reply-To” header when sending the email.
 
-`EmailMessage.send(fail_silently=False)` sends the message. 
+`EmailMessage.send(fail_silently=False)` sends the message.
 
-If a connection was specified when the email was constructed, that connection will be used. Otherwise, an instance of the default backend will be instantiated and used. 
+If a connection was specified when the email was constructed, that connection will be used. Otherwise, an instance of the default backend will be instantiated and used.
 
 If the keyword argument `fail_silently` is True, exceptions raised while sending the message will be quashed. An empty list of recipients will not raise an exception.
 
@@ -246,7 +246,7 @@ with mail.get_connection() as conn:
     connection=conn,
     )
     email1.send()
-    
+
     email2 = EmailMessage(
         'Hello',
         'Body goes here',
@@ -273,7 +273,7 @@ You can use the following two methods to adding attachments:
     - Alternatively, you can pass `attach()` three arguments: **filename**, **content** and **mimetype**. filename is the name of the file attachment as it will appear in the email, content is the data that will be contained inside the attachment and mimetype is the optional MIME type for the attachment. If you omit mimetype, the MIME content type will be guessed from the filename of the attachment.
 
         For example:
-        
+
         ```
         message.attach('design.png', img_data, 'image/png')
         ```
@@ -289,7 +289,7 @@ You can use the following two methods to adding attachments:
     ```
     message.attach_file('/images/weather_map.png')
     ```
-    
+
     For **MIME** types starting with text/, binary data is handled as in `attach()`.
 
 ## Preventing header injection
@@ -426,6 +426,7 @@ This backend is not intended for use in production – it is provided as a conve
 Support for `pathlib.Path` was added.
 
 ### In-memory backend
+
 The 'locmem' backend stores messages in a special attribute of the **Mail** instance. The `outbox` attribute is created when the first message is sent. It’s a list with an `EmailMessage` instance for each message that would be sent.
 
 To specify this backend, put the following in your configurations:
@@ -447,6 +448,37 @@ MAIL_BACKEND = 'dummy'
 ```
 
 This backend is not intended for use in production – it is provided as a convenience that can be used during development.
+
+### Defining a custom email backend
+
+If you need to change how emails are sent you can write your own email backend.
+The `MAIL_BACKEND` configuration in your settings file is then the Python import path for your backend class. for example:
+
+```
+MAIL_BACKEND = 'flask_mailman.backens.custom'
+```
+
+A more direct way is to import your custom backend class, and pass it to `flask_mailman.get_connection` function:
+
+```python
+from flask import Flask
+from flask_mailman import Mail
+
+from your_custom_backend import CustomBackend
+
+app = Flask(__name__)
+mail = Mail(app)
+
+connection = mail.get_connection(backend=CustomBackend)
+connection.send_messages(messages)
+```
+
+Custom email backends should subclass `BaseEmailBackend` that is located in the `flask_mailman.backends.base` module.
+A custom email backend must implement the `send_messages(email_messages)` method.
+This method receives a list of `EmailMessage` instances and returns the number of successfully delivered messages.
+If your backend has any concept of a persistent session or connection, you should also implement the `open()` and `close()` methods.
+
+Refer to `flask_mailman.backends.smtp.EmailBackend` for a reference implementation.
 
 ## Convenient functions
 
