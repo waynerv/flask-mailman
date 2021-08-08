@@ -32,7 +32,7 @@ class TestBackend(TestCase):
         )
         assert msg.send() == 1
 
-    def test_filebased_backend(self):
+    def test_file_backend(self):
         with tempfile.TemporaryDirectory() as tempdir:
             self.app.extensions['mailman'].backend = 'file'
             self.app.extensions['mailman'].file_path = tempdir
@@ -98,3 +98,20 @@ class TestBackend(TestCase):
         self.assertEqual(len(self.mail.outbox), 1)
         sent_msg = self.mail.outbox[0]
         self.assertEqual(sent_msg.subject, "testing")
+
+    def test_import_path_locmem_backend(self):
+        for i, backend_path in enumerate(
+            ["flask_mailman.backends.locmem", "flask_mailman.backends.locmem.EmailBackend"]
+        ):
+            with self.subTest():
+                self.app.extensions['mailman'].backend = backend_path
+                msg = EmailMessage(
+                    subject="testing",
+                    to=["to@example.com"],
+                    body="testing",
+                )
+                msg.send()
+
+                self.assertEqual(len(self.mail.outbox), i + 1)
+                sent_msg = self.mail.outbox[0]
+                self.assertEqual(sent_msg.subject, "testing")

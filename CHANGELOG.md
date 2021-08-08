@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Add support for custom email backend.
+
 ## [0.2.4] - 2021-06-15
 
 ### Added
