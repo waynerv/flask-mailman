@@ -21,6 +21,8 @@ from .message import (
 )
 
 if t.TYPE_CHECKING:
+    from flask.app import Flask
+    from flask.config import Config
     from flask_mailman.backends.base import BaseEmailBackend
 
 __all__ = [
@@ -39,6 +41,23 @@ __all__ = [
 
 
 available_backends = ['console', 'dummy', 'file', 'smtp', 'locmem']
+
+default_config:"Config" = {
+    'MAIL_BACKEND' : 'locmem',
+    'MAIL_SERVER': 'localhost',
+    'MAIL_PORT': 25,
+    'MAIL_USERNAME' : None,
+    'MAIL_PASSWORD' : None,
+    'MAIL_USE_TLS' : False,
+    'MAIL_USE_SSL' : False,
+    'MAIL_DEFAULT_SENDER' : None,
+    'MAIL_TIMEOUT' : None,
+    'MAIL_SSL_KEYFILE' : None,
+    'MAIL_SSL_CERTFILE' : None,
+    'MAIL_USE_LOCALTIME' : False,
+    'MAIL_FILE_PATH' : None,
+    'MAIL_DEFAULT_CHARSET' : 'utf-8'
+}
 
 
 class _MailMixin(object):
@@ -234,31 +253,13 @@ class Mail(_MailMixin):
         else:
             self.state = None
 
-    @staticmethod
-    def init_mail(config, testing=False):
+
+    def init_mail(self, config:"Config", testing=False):
         # Set default mail backend in different environment
-        mail_backend = config.get('MAIL_BACKEND')
-        if mail_backend is None or mail_backend == str():
-            mail_backend = 'locmem' if testing else 'smtp'
 
-        return _Mail(
-            config.get('MAIL_SERVER', 'localhost'),
-            config.get('MAIL_PORT', 25),
-            config.get('MAIL_USERNAME'),
-            config.get('MAIL_PASSWORD'),
-            config.get('MAIL_USE_TLS', False),
-            config.get('MAIL_USE_SSL', False),
-            config.get('MAIL_DEFAULT_SENDER'),
-            config.get('MAIL_TIMEOUT'),
-            config.get('MAIL_SSL_KEYFILE'),
-            config.get('MAIL_SSL_CERTFILE'),
-            config.get('MAIL_USE_LOCALTIME', False),
-            config.get('MAIL_FILE_PATH'),
-            config.get('MAIL_DEFAULT_CHARSET', 'utf-8'),
-            mail_backend,
-        )
+        return self._get_mail_for_base(config, testing)
 
-    def init_app(self, app):
+    def init_app(self, app:"Flask"):
         """Initializes your mail settings from the application settings.
 
         You can use this if you want to set up your Mail instance
@@ -272,6 +273,43 @@ class Mail(_MailMixin):
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['mailman'] = state
         return state
+
+    def _set_the_config(self, config:"Config") -> "Config":
+        """
+        prepare the default config.
+        """
+        for key in default_config.keys():
+            if config.get(key):
+                default_config[key] = config[key]
+        return default_config
+
+    def _get_args_for_mail(self, config:"Config") ->t.Tuple[str, int]:
+        data = list()
+        for k,v in config.items():
+            data.append(v)
+        return tuple(data)
+
+    def _get_mail_for_sendgrid(self, config:"Config") -> "_Mail":
+        _config:t.Dict[str, t.Union[str, int]] = dict(
+            MAIL_SERVER = "smtp.sendgrid.com",
+            MAIL_PORT = 587,
+            MAIL_USERNAME = "apikey",
+            MAIL_PASSWORD = config.get("SENDGRID_API_KEY"),
+            MAIL_USE_TLS = True
+        )
+        _config = self._set_the_config(_config)
+        args = self._get_args_for_mail(_config)
+        _mail = _Mail(*args)
+        return _mail
+
+    def _get_mail_for_base(self, config:"Config", testing:bool) -> "_Mail":
+        
+        if config.get('MAIL_BACKEND') is None or config.get('MAIL_BACKEND') == str():
+            config['MAIL_BACKEND'] = 'locmem' if testing else 'smtp'
+
+        config = self._set_the_config(config)
+        _mail = _Mail(*tuple(config))
+        return _mail
 
     def __getattr__(self, name):
         return getattr(self.state, name, None)
