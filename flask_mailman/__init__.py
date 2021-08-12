@@ -253,15 +253,13 @@ class Mail(_MailMixin):
             self.state = self.init_app(app)
         else:
             self.state = None
-
-
+   
     def init_mail(self, config:"Config", testing=False):
-        # Set default mail backend in different environment
-        if 'sendgrid' in config.get("MAIL_BACKEND"):
-            return self._get_mail_for_sendgrid(config, testing)
+        if hasattr(config, 'MAIL_BACKEND') and 'sendgrid' in config.get("MAIL_BACKEND"):
+            return self._get__mail_for_sendgrid(config, testing)
         
         else:
-            return self._get_mail_for_base(config, testing)
+            return self._get__mail_for_base(config, testing)
 
     def init_app(self, app:"Flask"):
         """Initializes your mail settings from the application settings.
@@ -286,7 +284,7 @@ class Mail(_MailMixin):
             if config.get(key):
                 default_config[key] = config[key]
 
-        if default_config.get('MAIL_BACKEND') is None or default_config.get('MAIL_BACKEND') == str():
+        if not config.get('MAIL_BACKEND'):
             default_config['MAIL_BACKEND'] = 'locmem' if testing else 'smtp'
 
         return default_config
@@ -297,7 +295,7 @@ class Mail(_MailMixin):
             data.append(v)
         return tuple(data)
 
-    def _get_mail_for_base(
+    def _get__mail_for_base(
                 self, 
                 config:"Config", 
                 testing:bool
@@ -310,7 +308,7 @@ class Mail(_MailMixin):
         _mail = _Mail(*args)
         return _mail
 
-    def _get_mail_for_sendgrid(self, config:"Config", testing:bool) -> "_Mail":
+    def _get__mail_for_sendgrid(self, config:"Config", testing:bool) -> "_Mail":
         """
         configure the _Mail object with the provided config data
         to send emails using sendgrid api token.
