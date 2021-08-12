@@ -1,13 +1,14 @@
 """
 Tools for sending email.
 """
-import types
 import typing as t
 from importlib import import_module
 
 from flask import current_app
 
 from flask_mailman.utils import DNS_NAME, CachedDnsName
+
+from .error import ConfigError
 
 from .message import (
     DEFAULT_ATTACHMENT_MIME_TYPE,
@@ -43,7 +44,6 @@ __all__ = [
 available_backends = ['console', 'dummy', 'file', 'smtp', 'locmem']
 
 default_config:"Config" = {
-    'MAIL_BACKEND' : 'locmem',
     'MAIL_SERVER': 'localhost',
     'MAIL_PORT': 25,
     'MAIL_USERNAME' : None,
@@ -56,7 +56,8 @@ default_config:"Config" = {
     'MAIL_SSL_CERTFILE' : None,
     'MAIL_USE_LOCALTIME' : False,
     'MAIL_FILE_PATH' : None,
-    'MAIL_DEFAULT_CHARSET' : 'utf-8'
+    'MAIL_DEFAULT_CHARSET' : 'utf-8',
+    'MAIL_BACKEND' : 'smtp',
 }
 
 
@@ -71,7 +72,7 @@ class _MailMixin(object):
         :param backend_class_name:
             the string based backend class name.
         """
-        backend_module: types.ModuleType = import_module(backend_module_name)
+        backend_module: t.ModuleType = import_module(backend_module_name)
         backend: "BaseEmailBackend" = getattr(backend_module, backend_class_name)
         return backend
 
@@ -256,8 +257,11 @@ class Mail(_MailMixin):
 
     def init_mail(self, config:"Config", testing=False):
         # Set default mail backend in different environment
-
-        return self._get_mail_for_base(config, testing)
+        if 'sendgrid' in config.get("MAIL_BACKEND"):
+            return self._get_mail_for_sendgrid(config, testing)
+        
+        else:
+            return self._get_mail_for_base(config, testing)
 
     def init_app(self, app:"Flask"):
         """Initializes your mail settings from the application settings.
@@ -274,13 +278,17 @@ class Mail(_MailMixin):
         app.extensions['mailman'] = state
         return state
 
-    def _set_the_config(self, config:"Config") -> "Config":
+    def _get_the_required_config(self, config:"Config", testing:bool) -> "Config":
         """
         prepare the default config.
         """
         for key in default_config.keys():
             if config.get(key):
                 default_config[key] = config[key]
+
+        if default_config.get('MAIL_BACKEND') is None or default_config.get('MAIL_BACKEND') == str():
+            default_config['MAIL_BACKEND'] = 'locmem' if testing else 'smtp'
+
         return default_config
 
     def _get_args_for_mail(self, config:"Config") ->t.Tuple[str, int]:
@@ -289,27 +297,46 @@ class Mail(_MailMixin):
             data.append(v)
         return tuple(data)
 
-    def _get_mail_for_sendgrid(self, config:"Config") -> "_Mail":
+    def _get_mail_for_base(
+                self, 
+                config:"Config", 
+                testing:bool
+                ) -> "_Mail":
+        """
+        Configure the _Mail object with proper config files.
+        """
+        config = self._get_the_required_config(config, testing)
+        args = self._get_args_for_mail(config)
+        _mail = _Mail(*args)
+        return _mail
+
+    def _get_mail_for_sendgrid(self, config:"Config", testing:bool) -> "_Mail":
+        """
+        configure the _Mail object with the provided config data
+        to send emails using sendgrid api token.
+        """
+        if not config.get("SENDGRID_API_KEY", None) or not config.get("MAIL_DEFAULT_SENDER"):
+
+            err_msg = "SENDGRID_API_KEY and MAIL_DEFAULT_SENDER config is required for `sendgrid` backend.\n"\
+                    "for example:\n"\
+                        "app.config['SENDGRID_API_KEY']='your_sendgrid_api_key'\n"\
+                            "app.config['MAIL_DEFAULT_SENDER']='sendgrid_sender_email'"
+
+            raise ConfigError(err_msg)
+
         _config:t.Dict[str, t.Union[str, int]] = dict(
             MAIL_SERVER = "smtp.sendgrid.com",
             MAIL_PORT = 587,
             MAIL_USERNAME = "apikey",
             MAIL_PASSWORD = config.get("SENDGRID_API_KEY"),
-            MAIL_USE_TLS = True
+            MAIL_USE_TLS = True,
+            MAIL_DEFAULT_SENDER = config.get("MAIL_DEFAULT_SENDER")
         )
-        _config = self._set_the_config(_config)
+        _config = self._get_the_required_config(_config, testing)
         args = self._get_args_for_mail(_config)
         _mail = _Mail(*args)
         return _mail
 
-    def _get_mail_for_base(self, config:"Config", testing:bool) -> "_Mail":
-        
-        if config.get('MAIL_BACKEND') is None or config.get('MAIL_BACKEND') == str():
-            config['MAIL_BACKEND'] = 'locmem' if testing else 'smtp'
-
-        config = self._set_the_config(config)
-        _mail = _Mail(*tuple(config))
-        return _mail
 
     def __getattr__(self, name):
         return getattr(self.state, name, None)
