@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from flask_mailman import EmailMessage
-from flask_mailman.backends import locmem, smtp
+from flask_mailman.backends import locmem, smtp, sendgrid
 from tests import TestCase
 
 
@@ -74,6 +74,18 @@ class TestBackend(TestCase):
         )
 
         with patch.object(smtp.EmailBackend, 'send_messages') as mock_send_fn:
+            mock_send_fn.return_value = 66
+            assert msg.send() == 66
+
+    def test_sendgrid_backend(self):
+        self.app.extensions['mailman'].backend = 'sendgrid'
+        msg = EmailMessage(
+            subject="testing",
+            to=["to@example.com"],
+            body="testing",
+        )
+
+        with patch.object(sendgrid.EmailBackend, 'send_messages') as mock_send_fn:
             mock_send_fn.return_value = 66
             assert msg.send() == 66
 
