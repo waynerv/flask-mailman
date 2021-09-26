@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import random
 
 from flask_mailman.backends.console import EmailBackend as ConsoleEmailBackend
 
@@ -47,7 +48,7 @@ class EmailBackend(ConsoleEmailBackend):
         """Return a unique file name."""
         if self._fname is None:
             timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-            fname = "%s-%s.log" % (timestamp, abs(id(self)))
+            fname = "%s-%s.log" % (timestamp, random.randrange(1e15))
             self._fname = os.path.join(self.file_path, fname)
         return self._fname
 
