@@ -427,7 +427,7 @@ Support for `pathlib.Path` was added.
 
 ### In-memory backend
 
-The 'locmem' backend stores messages in a special attribute of the **Mail** instance. The `outbox` attribute is created when the first message is sent. It’s a list with an `EmailMessage` instance for each message that would be sent.
+The 'locmem' backend stores messages in a special attribute of the **Mail** instance. The `outbox` attribute is created when the backend is first created (e.g. by sending a message or calling `.get_connection()`). It’s a list with an `EmailMessage` instance for each message that would be sent.
 
 To specify this backend, put the following in your configurations:
 
