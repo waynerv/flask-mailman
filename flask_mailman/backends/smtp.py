@@ -25,6 +25,8 @@ class EmailBackend(BaseEmailBackend):
         timeout=None,
         ssl_keyfile=None,
         ssl_certfile=None,
+        source_address=None,
+        source_port=None,
         **kwargs,
     ):
         super().__init__(fail_silently=fail_silently, **kwargs)
@@ -37,9 +39,15 @@ class EmailBackend(BaseEmailBackend):
         self.timeout = self.mailman.timeout if timeout is None else timeout
         self.ssl_keyfile = self.mailman.ssl_keyfile if ssl_keyfile is None else ssl_keyfile
         self.ssl_certfile = self.mailman.ssl_certfile if ssl_certfile is None else ssl_certfile
+        self.source_address = self.mailman.source_address if source_address is None else source_address
+        self.source_port = self.mailman.source_port if source_port is None else source_port
         if self.use_ssl and self.use_tls:
             raise ValueError(
                 "EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive, so only set " "one of those settings to True."
+            )
+        if self.source_port is not None and self.source_address is None:
+            raise ValueError(
+                "MAIL_SOURCE_PORT is only valid when MAIL_SOURCE_ADDRESS is also set"
             )
         self.connection = None
         self._lock = threading.RLock()
@@ -70,6 +78,8 @@ class EmailBackend(BaseEmailBackend):
                     'certfile': self.ssl_certfile,
                 }
             )
+        if self.source_address is not None:
+            connection_params['source_address'] = (self.source_address, self.source_port)
         try:
             self.connection = self.connection_class(self.host, self.port, **connection_params)
 
