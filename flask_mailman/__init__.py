@@ -260,7 +260,7 @@ class Mail(_MailMixin):
             config.get('MAIL_FILE_PATH'),
             config.get('MAIL_DEFAULT_CHARSET', 'utf-8'),
             config.get('MAIL_SOURCE_ADDRESS'),
-            config.get('MAIL_SOURCE_PORT', 0),
+            config.get('MAIL_SOURCE_PORT'),
             mail_backend,
         )
 
