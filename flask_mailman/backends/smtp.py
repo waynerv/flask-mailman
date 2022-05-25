@@ -45,10 +45,6 @@ class EmailBackend(BaseEmailBackend):
             raise ValueError(
                 "EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive, so only set " "one of those settings to True."
             )
-        if self.source_port is not None and self.source_address is None:
-            raise ValueError(
-                "MAIL_SOURCE_PORT is only valid when MAIL_SOURCE_ADDRESS is also set"
-            )
         self.connection = None
         self._lock = threading.RLock()
 
@@ -78,8 +74,8 @@ class EmailBackend(BaseEmailBackend):
                     'certfile': self.ssl_certfile,
                 }
             )
-        if self.source_address is not None:
-            connection_params['source_address'] = (self.source_address, self.source_port)
+        if self.source_address is not None or self.source_port is not None:
+            connection_params['source_address'] = ((self.source_address or ''), (self.source_port or 0))
         try:
             self.connection = self.connection_class(self.host, self.port, **connection_params)
 
