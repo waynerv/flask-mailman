@@ -69,6 +69,14 @@ Flask-Mailman is configured through the standard Flask config API. A list of con
 
     Default: False.
 
+- **MAIL_SOURCE_ADDRESS**: The source IP address for the socket connection to the SMTP server. If None, then the OS default will be used. Specifying an explicit value for this configuration key may be useful in a machine with multiple network interfaces, if one interface in particular must be used when connecting to the mail server.
+
+    Default: None.
+
+- **MAIL_SOURCE_PORT**: The source TCP port for the socket connection to the SMTP server. If None, then the OS default will be used.
+
+    Default: None.
+
 Emails are managed through a *Mail* instance:
 ```python
 from flask import Flask
