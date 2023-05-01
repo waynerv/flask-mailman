@@ -61,7 +61,7 @@ doc = [
     "mkdocs-include-markdown-plugin",
     "mkdocs-material",
     "mkdocstrings",
-    "mkdocs-material-extension",
+    "mkdocs-material-extensions",
     "mkdocs-autorefs"
     ]
 
