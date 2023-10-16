@@ -76,7 +76,7 @@ class EmailBackend(BaseEmailBackend):
             # TLS/SSL are mutually exclusive, so only attempt TLS over
             # non-secure connections.
             if not self.use_ssl and self.use_tls:
-                self.connection.starttls(keyfile=self.ssl_keyfile, certfile=self.ssl_certfile)
+                self.connection.starttls()
             if self.username and self.password:
                 self.connection.login(self.username, self.password)
             return True
