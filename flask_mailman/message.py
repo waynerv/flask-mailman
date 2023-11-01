@@ -225,6 +225,8 @@ class EmailMessage:
         else:
             self.reply_to = []
         self.from_email = from_email or current_app.extensions['mailman'].default_sender
+        if isinstance(self.from_email, tuple):
+            self.from_email = formataddr(self.from_email)
         self.subject = subject
         self.body = body or ''
         self.attachments = []

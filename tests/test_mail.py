@@ -13,6 +13,17 @@ class TestMail(TestCase):
         sent_msg = self.mail.outbox[0]
         self.assertEqual(sent_msg.from_email, self.MAIL_DEFAULT_SENDER)
 
+    def test_send_mail_with_tuple_from_email(self):
+        self.mail.send_mail(
+            subject="testing",
+            message="test",
+            from_email=("Name", "support@mysite.com"),
+            recipient_list=["tester@example.com"],
+        )
+        self.assertEqual(len(self.mail.outbox), 1)
+        sent_msg = self.mail.outbox[0]
+        self.assertEqual(sent_msg.from_email, "Name <support@mysite.com>")
+
     def test_send_mass_mail(self):
         message1 = (
             'Subject here',
@@ -20,7 +31,7 @@ class TestMail(TestCase):
             'from@example.com',
             ['first@example.com', 'other@example.com'],
         )
-        message2 = ('Another Subject', 'Here is another message', 'from@example.com', ['second@test.com'])
+        message2 = ('Another Subject', 'Here is another message', ('Name', 'from@example.com'), ['second@test.com'])
         self.mail.send_mass_mail((message1, message2), fail_silently=False)
         self.assertEqual(len(self.mail.outbox), 2)
         msg1 = self.mail.outbox[0]
@@ -30,3 +41,4 @@ class TestMail(TestCase):
         self.assertEqual(msg1.from_email, "from@example.com")
         msg2 = self.mail.outbox[1]
         self.assertEqual(msg2.subject, "Another Subject")
+        self.assertEqual(msg2.from_email, "Name <from@example.com>")

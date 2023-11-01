@@ -3,6 +3,8 @@
 ## [1.0.0] - unreleased
 
 - Drop Python 3.6 support.
+- Support passing `from_email` in tuple format to `send_mail()` function
+([#35](https://github.com/waynerv/flask-mailman/issues/35)).
 
 ## [0.3.0] - 2021-08-08
 
