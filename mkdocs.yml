@@ -27,6 +27,7 @@ plugins:
   - include-markdown
   - search:
       lang: en
-  - mkdocstrings:
-      watch:
-        - flask-mailman
+  - mkdocstrings
+watch:
+  - docs
+  - flask_mailman
