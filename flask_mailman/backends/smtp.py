@@ -77,9 +77,7 @@ class EmailBackend(BaseEmailBackend):
             # non-secure connections.
             if not self.use_ssl and self.use_tls:
                 if self.ssl_certfile:
-                    context = ssl.SSLContext().load_cert_chain(
-                        self.ssl_certfile, keyfile=self.ssl_keyfile
-                    )
+                    context = ssl.SSLContext().load_cert_chain(self.ssl_certfile, keyfile=self.ssl_keyfile)
                 else:
                     context = None
                 self.connection.starttls(context=context)

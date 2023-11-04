@@ -1,10 +1,16 @@
 # Changelog
 
-## [1.0.0] - unreleased
+## [1.0.0] - 2023-11-04
 
 - Drop Python 3.6 support.
+- Fix compatibility issue with Python 3.10
+  ([#31](https://github.com/waynerv/flask-mailman/pull/31)).
+- Fix the log file generation issue to ensure that the log filename is random
+  ([#30](https://github.com/waynerv/flask-mailman/pull/30)).
+- Fix compatibility issue with Python 3.12
+  ([#56](https://github.com/waynerv/flask-mailman/issues/56)).
 - Support passing `from_email` in tuple format to `send_mail()` function
-([#35](https://github.com/waynerv/flask-mailman/issues/35)).
+  ([#35](https://github.com/waynerv/flask-mailman/issues/35)).
 
 ## [0.3.0] - 2021-08-08
 
