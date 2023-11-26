@@ -203,6 +203,7 @@ class _Mail(_MailMixin):
         use_localtime,
         file_path,
         default_charset,
+        mail_options,
         backend,
     ):
         self.server = server
@@ -218,6 +219,7 @@ class _Mail(_MailMixin):
         self.use_localtime = use_localtime
         self.file_path = file_path
         self.default_charset = default_charset
+        self.mail_options = mail_options
         self.backend = backend
 
 
@@ -255,6 +257,7 @@ class Mail(_MailMixin):
             config.get('MAIL_USE_LOCALTIME', False),
             config.get('MAIL_FILE_PATH'),
             config.get('MAIL_DEFAULT_CHARSET', 'utf-8'),
+            config.get('MAIL_SEND_OPTIONS', []),
             mail_backend,
         )
 

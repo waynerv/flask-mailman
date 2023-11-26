@@ -138,7 +138,9 @@ class EmailBackend(BaseEmailBackend):
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()
         try:
-            self.connection.sendmail(from_email, recipients, message.as_bytes(linesep='\r\n'))
+            self.connection.sendmail(
+                from_email, recipients, message.as_bytes(linesep='\r\n'), mail_options=self.mailman.mail_options
+            )
         except smtplib.SMTPException:
             if not self.fail_silently:
                 raise
