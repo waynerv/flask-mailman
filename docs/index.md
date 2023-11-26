@@ -69,6 +69,10 @@ Flask-Mailman is configured through the standard Flask config API. A list of con
 
     Default: False.
 
+- **MAIL_SEND_OPTIONS**: `mail_options` for `smtplib.SMTP.sendmail`. If `SMTPUTF8` is included in `MAIL_SEND_OPTIONS`, and the server supports it, `from_mail` and `to` may contain non-ASCII characters.
+
+    Default: `[]`
+
 Emails are managed through a *Mail* instance:
 ```python
 from flask import Flask
