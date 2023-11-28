@@ -714,7 +714,7 @@ class TestMail(MailmanCustomizedTestCase):
         # The child message header is not base64 encoded
         self.assertIn("Child Subject", parent_s)
 
-        # Feature test: try attaching Django's EmailMessage object directly to the mail.
+        # Feature test: try attaching EmailMessage object directly to the mail.
         parent_msg = EmailMessage(
             "Parent Subject",
             "Some parent body",
