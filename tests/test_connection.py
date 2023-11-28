@@ -75,3 +75,41 @@ class TestConnection(TestCase):
         msg = EmailMessage(subject="testing\n\r", body="testing", to=["to@example.com"])
         with pytest.raises(BadHeaderError):
             msg.send()
+
+    def test_arbitrary_keyword(self):
+        """
+        Make sure that get_connection() accepts arbitrary keyword that might be
+        used with custom backends.
+        """
+        c = self.mail.get_connection(fail_silently=True, foo="bar")
+        self.assertTrue(c.fail_silently)
+
+    def test_close_connection(self):
+        """
+        Connection can be closed (even when not explicitly opened)
+        """
+        conn = self.mail.get_connection(username="", password="")
+        conn.close()
+
+    def test_use_as_contextmanager(self):
+        """
+        The connection can be used as a contextmanager.
+        """
+        opened = [False]
+        closed = [False]
+        conn = self.mail.get_connection(username="", password="")
+
+        def open():
+            opened[0] = True
+
+        conn.open = open
+
+        def close():
+            closed[0] = True
+
+        conn.close = close
+        with conn as same_conn:
+            self.assertTrue(opened[0])
+            self.assertIs(same_conn, conn)
+            self.assertFalse(closed[0])
+        self.assertTrue(closed[0])

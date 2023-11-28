@@ -1,3 +1,4 @@
+from email import message_from_bytes
 import unittest
 from contextlib import contextmanager
 
@@ -12,7 +13,7 @@ class TestCase(unittest.TestCase):
     MAIL_DEFAULT_SENDER = "support@mysite.com"
 
     def setUp(self):
-        self.app = Flask(__name__)
+        self.app = Flask(import_name=__name__)
         self.app.config.from_object(self)
         self.assertTrue(self.app.testing)
         self.mail = Mail(self.app)
@@ -63,3 +64,46 @@ class TestCase(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def capsys(self, capsys):
         self.capsys = capsys
+
+
+class MailmanCustomizedTestCase(TestCase):
+    def assertMessageHasHeaders(self, message, headers):
+        """
+        Asserts that the `message` has all `headers`.
+
+        message: can be an instance of an email.Message subclass or a string
+                with the contents of an email message.
+        headers: should be a set of (header-name, header-value) tuples.
+        """
+        if isinstance(message, bytes):
+            message = message_from_bytes(message)
+        msg_headers = set(message.items())
+        self.assertTrue(
+            headers.issubset(msg_headers),
+            msg="Message is missing " "the following headers: %s" % (headers - msg_headers),
+        )
+
+    def get_decoded_attachments(self, message):
+        """
+        Encode the specified EmailMessage, then decode
+        it using Python's email.parser module and, for each attachment of the
+        message, return a list of tuples with (filename, content, mimetype).
+        """
+        msg_bytes = message.message().as_bytes()
+        email_message = message_from_bytes(msg_bytes)
+
+        def iter_attachments():
+            for i in email_message.walk():
+                if i.get_content_disposition() == "attachment":
+                    filename = i.get_filename()
+                    content = i.get_payload(decode=True)
+                    mimetype = i.get_content_type()
+                    yield filename, content, mimetype
+
+        return list(iter_attachments())
+
+    def get_message(self):
+        return self.mail.outbox[0].message()
+
+    def flush_mailbox(self):
+        self.mail.outbox.clear()
