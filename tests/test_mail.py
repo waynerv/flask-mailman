@@ -1,3 +1,6 @@
+from unittest import mock
+from flask_mailman.message import EmailMessage
+from flask_mailman.utils import DNS_NAME
 from tests import TestCase
 
 
@@ -42,3 +45,10 @@ class TestMail(TestCase):
         msg2 = self.mail.outbox[1]
         self.assertEqual(msg2.subject, "Another Subject")
         self.assertEqual(msg2.from_email, "Name <from@example.com>")
+
+    @mock.patch("socket.getfqdn", return_value="漢字")
+    def test_non_ascii_dns_non_unicode_email(self, mocked_getfqdn):
+        delattr(DNS_NAME, "_fqdn")
+        email = EmailMessage("subject", "content", "from@example.com", ["to@example.com"])
+        email.encoding = "iso-8859-1"
+        self.assertIn("@xn--p8s937b>", email.message()["Message-ID"])
