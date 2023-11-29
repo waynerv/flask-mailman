@@ -14,7 +14,7 @@ class CachedDnsName:
 
     def get_fqdn(self):
         if not hasattr(self, '_fqdn'):
-            self._fqdn = socket.getfqdn()
+            self._fqdn = punycode(socket.getfqdn())
         return self._fqdn
 
 
