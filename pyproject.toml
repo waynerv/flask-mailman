@@ -46,6 +46,7 @@ mkdocs-autorefs = {version = "*", optional = true}
 pre-commit = {version = "*", optional = true}
 toml = {version = "*", optional = true}
 bump2version = {version = "*", optional = true}
+aiosmtpd = {version = "^1.4.4.post2", optional = true}
 
 [tool.poetry.extras]
 test = [
@@ -53,7 +54,8 @@ test = [
     "black",
     "isort",
     "flake8",
-    "pytest-cov"
+    "pytest-cov",
+    "aiosmtpd"
     ]
 
 dev = ["tox", "pre-commit", "virtualenv", "pip", "twine", "toml", "bump2version"]
