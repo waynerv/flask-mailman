@@ -344,12 +344,20 @@ class TestBackend(MailmanCustomizedTestCase):
 
     def test_email_ssl_attempts_ssl_connection(self):
         with SmtpdContext(self.app.extensions['mailman']):
+            _, tmpKey = tempfile.mkstemp()
+            _, tmpCert = tempfile.mkstemp()
             self.app.extensions['mailman'].use_ssl = True
+            self.app.extensions['mailman'].ssl_keyfile = tmpKey
+            self.app.extensions['mailman'].ssl_certfile = tmpCert
+
             backend = smtp.EmailBackend()
             self.assertTrue(backend.use_ssl)
             with self.assertRaises(SSLError):
                 with backend:
                     pass
+
+            Path(tmpKey).unlink()
+            Path(tmpCert).unlink()
 
     def test_connection_timeout_default(self):
         """The connection's timeout value is None by default."""

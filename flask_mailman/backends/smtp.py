@@ -2,6 +2,7 @@
 import smtplib
 import ssl
 import threading
+
 from werkzeug.utils import cached_property
 
 from flask_mailman.backends.base import BaseEmailBackend
