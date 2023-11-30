@@ -4,6 +4,7 @@ import os
 import socket
 from ssl import SSLError
 import tempfile
+from unittest import mock
 import pytest
 
 from pathlib import Path
@@ -343,12 +344,12 @@ class TestBackend(MailmanCustomizedTestCase):
                     pass
 
     def test_email_ssl_attempts_ssl_connection(self):
+        fake_keyfile = os.path.join(os.path.dirname(__file__), "attachments", 'file.txt')
+        fake_certfile = os.path.join(os.path.dirname(__file__), "attachments", 'file_txt')
         with SmtpdContext(self.app.extensions['mailman']):
-            _, tmpKey = tempfile.mkstemp()
-            _, tmpCert = tempfile.mkstemp()
             self.app.extensions['mailman'].use_ssl = True
-            self.app.extensions['mailman'].ssl_keyfile = tmpKey
-            self.app.extensions['mailman'].ssl_certfile = tmpCert
+            self.app.extensions['mailman'].ssl_keyfile = fake_keyfile
+            self.app.extensions['mailman'].ssl_certfile = fake_certfile
 
             backend = smtp.EmailBackend()
             self.assertTrue(backend.use_ssl)
@@ -356,8 +357,26 @@ class TestBackend(MailmanCustomizedTestCase):
                 with backend:
                     pass
 
-            Path(tmpKey).unlink()
-            Path(tmpCert).unlink()
+    @mock.patch("ssl.SSLContext.load_cert_chain", return_value="")
+    def test_email_ssl_cached_context(self, result_mocked):
+        fake_keyfile = os.path.join(os.path.dirname(__file__), "attachments", 'file.txt')
+        fake_certfile = os.path.join(os.path.dirname(__file__), "attachments", 'file_txt')
+
+        with SmtpdContext(self.app.extensions['mailman']):
+            self.app.extensions['mailman'].use_ssl = True
+
+            backend_one = smtp.EmailBackend()
+            backend_another = smtp.EmailBackend()
+
+            self.assertTrue(backend_one.ssl_context, backend_another.ssl_context)
+
+            self.app.extensions['mailman'].ssl_keyfile = fake_keyfile
+            self.app.extensions['mailman'].ssl_certfile = fake_certfile
+
+            backend_one = smtp.EmailBackend()
+            backend_another = smtp.EmailBackend()
+
+            self.assertTrue(backend_one.ssl_context, backend_another.ssl_context)
 
     def test_connection_timeout_default(self):
         """The connection's timeout value is None by default."""
