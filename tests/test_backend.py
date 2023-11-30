@@ -2,6 +2,7 @@ from email.header import Header
 from email.utils import parseaddr
 import os
 import socket
+from ssl import SSLError
 import tempfile
 import pytest
 
@@ -338,6 +339,15 @@ class TestBackend(MailmanCustomizedTestCase):
             backend = smtp.EmailBackend()
             self.assertTrue(backend.use_tls)
             with self.assertRaises(SMTPException, msg="STARTTLS extension not supported by server."):
+                with backend:
+                    pass
+
+    def test_email_ssl_attempts_ssl_connection(self):
+        with SmtpdContext(self.app.extensions['mailman']):
+            self.app.extensions['mailman'].use_ssl = True
+            backend = smtp.EmailBackend()
+            self.assertTrue(backend.use_ssl)
+            with self.assertRaises(SSLError):
                 with backend:
                     pass
 
