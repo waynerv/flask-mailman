@@ -3,6 +3,8 @@ import smtplib
 import ssl
 import threading
 
+from werkzeug.utils import cached_property
+
 from flask_mailman.backends.base import BaseEmailBackend
 from flask_mailman.message import sanitize_address
 from flask_mailman.utils import DNS_NAME
@@ -48,6 +50,15 @@ class EmailBackend(BaseEmailBackend):
     def connection_class(self):
         return smtplib.SMTP_SSL if self.use_ssl else smtplib.SMTP
 
+    @cached_property
+    def ssl_context(self):
+        if self.ssl_certfile or self.ssl_keyfile:
+            ssl_context = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_CLIENT)
+            ssl_context.load_cert_chain(self.ssl_certfile, self.ssl_keyfile)
+            return ssl_context
+        else:
+            return ssl.create_default_context()
+
     def open(self):
         """
         Ensure an open connection to the email server. Return whether or not a
@@ -64,12 +75,7 @@ class EmailBackend(BaseEmailBackend):
         if self.timeout is not None:
             connection_params['timeout'] = self.timeout
         if self.use_ssl:
-            connection_params.update(
-                {
-                    'keyfile': self.ssl_keyfile,
-                    'certfile': self.ssl_certfile,
-                }
-            )
+            connection_params["context"] = self.ssl_context
         try:
             self.connection = self.connection_class(self.host, self.port, **connection_params)
 
