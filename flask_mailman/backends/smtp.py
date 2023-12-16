@@ -139,7 +139,10 @@ class EmailBackend(BaseEmailBackend):
         message = email_message.message()
         try:
             self.connection.sendmail(
-                from_email, recipients, message.as_bytes(linesep='\r\n'), mail_options=self.mailman.mail_options
+                from_email,
+                recipients,
+                message.as_bytes(linesep='\r\n'),
+                mail_options=self.mailman.mail_options,
             )
         except smtplib.SMTPException:
             if not self.fail_silently:
