@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.1] - 2023-12-16
+
+- Add option `MAIL_SEND_OPTIONS` to support `SMTPUTF8`
+  ([#61](https://github.com/waynerv/flask-mailman/pull/61)).
+
 ## [1.0.0] - 2023-11-04
 
 - Drop Python 3.6 support.
