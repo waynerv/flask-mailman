@@ -1,9 +1,12 @@
 # Changelog
 
-## [1.0.1] - 2023-12-16
+## [1.1.0] - 2024-4-22
 
 - Add configuration key `MAIL_SEND_OPTIONS` to support setting `mail_options` for `smtplib.SMTP.send_mail`
   (e.g. `SMTPUTF8`) ([#61](https://github.com/waynerv/flask-mailman/pull/61)).
+- Pre-encodes FQDN str with punycode to improve compatibility ([#66](https://github.com/waynerv/flask-mailman/pull/66)).
+- Migrates as many as possible test cases from Django mail module ([#64](https://github.com/waynerv/flask-mailman/pull/64)).
+- Improve way of populating smtp key/cert to avoid TypeError in py>=12 ([#68](https://github.com/waynerv/flask-mailman/pull/68)).
 
 ## [1.0.0] - 2023-11-04
 
