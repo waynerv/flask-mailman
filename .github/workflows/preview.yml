@@ -18,11 +18,11 @@ jobs:
 
     strategy:
       matrix:
-        python-versions: [ 3.8 ]
+        python-versions: [ 3.12 ]
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python-versions }}
 
