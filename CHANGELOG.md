@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1] - 2024-07-06
+
+- Fix SafeMIMEText.set_payload() crash on Python 3.13 ([#80](https://github.com/waynerv/flask-mailman/pull/80)).
+
 ## [1.1.0] - 2024-4-22
 
 - Add configuration key `MAIL_SEND_OPTIONS` to support setting `mail_options` for `smtplib.SMTP.send_mail`
