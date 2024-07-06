@@ -722,6 +722,10 @@
 <p><strong>MAIL_USE_LOCALTIME</strong>: Whether to send the SMTP <strong>Date</strong> header of email messages in the local time zone (True) or in UTC (False).</p>
 <p>Default: False.</p>
 </li>
+<li>
+<p><strong>MAIL_SEND_OPTIONS</strong>: <code>mail_options</code> for <code>smtplib.SMTP.sendmail</code>. If <code>SMTPUTF8</code> is included in <code>MAIL_SEND_OPTIONS</code>, and the server supports it, <code>from_mail</code> and <code>to</code> may contain non-ASCII characters.</p>
+<p>Default: <code>[]</code></p>
+</li>
 </ul>
 <p>Emails are managed through a <em>Mail</em> instance:
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>

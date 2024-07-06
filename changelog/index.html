@@ -278,6 +278,20 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#111-2024-07-06" class="md-nav__link">
+    [1.1.1] - 2024-07-06
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110-2024-4-22" class="md-nav__link">
+    [1.1.0] - 2024-4-22
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#100-2023-11-04" class="md-nav__link">
     [1.0.0] - 2023-11-04
   </a>
@@ -440,6 +454,20 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#111-2024-07-06" class="md-nav__link">
+    [1.1.1] - 2024-07-06
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110-2024-4-22" class="md-nav__link">
+    [1.1.0] - 2024-4-22
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#100-2023-11-04" class="md-nav__link">
     [1.0.0] - 2023-11-04
   </a>
@@ -587,6 +615,18 @@
 
 <!-- BEGIN INCLUDE ../CHANGELOG.md -->
 <h1 id="changelog">Changelog</h1>
+<h2 id="111-2024-07-06">[1.1.1] - 2024-07-06</h2>
+<ul>
+<li>Fix SafeMIMEText.set_payload() crash on Python 3.13 (<a href="https://github.com/waynerv/flask-mailman/pull/80">#80</a>).</li>
+</ul>
+<h2 id="110-2024-4-22">[1.1.0] - 2024-4-22</h2>
+<ul>
+<li>Add configuration key <code>MAIL_SEND_OPTIONS</code> to support setting <code>mail_options</code> for <code>smtplib.SMTP.send_mail</code>
+  (e.g. <code>SMTPUTF8</code>) (<a href="https://github.com/waynerv/flask-mailman/pull/61">#61</a>).</li>
+<li>Pre-encodes FQDN str with punycode to improve compatibility (<a href="https://github.com/waynerv/flask-mailman/pull/66">#66</a>).</li>
+<li>Migrates as many as possible test cases from Django mail module (<a href="https://github.com/waynerv/flask-mailman/pull/64">#64</a>).</li>
+<li>Improve way of populating smtp key/cert to avoid TypeError in py&gt;=12 (<a href="https://github.com/waynerv/flask-mailman/pull/68">#68</a>).</li>
+</ul>
 <h2 id="100-2023-11-04">[1.0.0] - 2023-11-04</h2>
 <ul>
 <li>Drop Python 3.6 support.</li>

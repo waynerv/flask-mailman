@@ -2,17 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://waynerv.github.io/flask-mailman/</loc>
-         <lastmod>2023-11-04</lastmod>
+         <lastmod>2024-07-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://waynerv.github.io/flask-mailman/changelog/</loc>
-         <lastmod>2023-11-04</lastmod>
+         <lastmod>2024-07-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://waynerv.github.io/flask-mailman/contributing/</loc>
-         <lastmod>2023-11-04</lastmod>
+         <lastmod>2024-07-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
